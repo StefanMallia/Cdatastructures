@@ -1,57 +1,61 @@
-#ifndef _PQUEUE_H_
-#define _PQUEUE_H_
+//#ifndef _PQUEUE_H_
+//#define _PQUEUE_H_
 #include <stdbool.h>
+#include <string.h> /*has the strcpy prototype*/
+#include <stdlib.h> /* has the malloc prototype */
+#include <stdio.h>
 
 struct pqnode 
 {
 	int element;
 	int priority;
-	struct pqnode * next;
+	struct pqnode * next;	
 	
-	
-} Pqnode;
-
-struct priority_q
-{
-	Pqnode * front;
-	Pqnode * rear;
-	int elements;
-} Priority_q
+};
 
 
-
-
-
-
-struct priority_q* create_q(int max_size)
+struct pqnode * create_q(int max_size)
 {
 	
-	
+	struct pqnode * Qhead = NULL;
+	struct pqnode * Qprev, * Qcurrent;
+
+	int i=0;
+	for(i=0; i<max_size; i++)
+	{
+		Qcurrent = (struct pqnode *) malloc(sizeof(struct pqnode));
+		if (Qhead == NULL) /*first structure*/
+			Qhead = Qcurrent;
+		else
+			Qprev->next = Qcurrent;
+		
+		Qcurrent->next = NULL;
+		Qprev = Qcurrent;
+	}
 
 
-	struct priority_q * Q = (struct priority_q *)malloc(sizeof(struct priority_q) * max_size);
-	
 
-	return Q;
+	return Qhead;
 
 
 }
 
 
-void enqueue(struct priority_q* Q, int x, int p)
+void enqueue(struct pqnode * Queuenode, int x, int p)
 {
-	int index = sizeof(Q.element);	
-	
+	while(Queuenode != NULL)
+		Queuenode = Queuenode->next;
 
-	Q[index].element = x;
-	Q[index].priority = p;
-
-	
+	if(Queuenode == NULL)
+	{
+		Queuenode->element = x;
+		Queuenode->priority = p;
+	}
 
 }
 
 
-void destroy(struct priority_q* obj)
+void destroy(struct pqnode * obj)
 {
     if(obj)
         free(obj);
@@ -66,15 +70,31 @@ void destroy(struct priority_q* obj)
 int main()
 {
 	
-	struct priority_q *Queue = create_q(10);
-	printf("%lu\n", sizeof(Q));
-	enqueue(Queue,10,11);
-	enqueue(Queue,20,21);
-	enqueue(Queue,30,31);
+	struct pqnode * Queue1 = create_q(20);
+	printf("%lu\n", sizeof(Queue1));
+	enqueue(Queue1,10,11);
+	enqueue(Queue1,20,21);
+	enqueue(Queue1,30,31);
+	enqueue(Queue1,40,41);
+	enqueue(Queue1,50,51);
+	enqueue(Queue1,60,61);
 
-	printf("%d %d %d %d %d %d %lu\n", Queue[0].element, Queue[0].priority, Queue[1].element, Queue[1].priority, Queue[2].element, Queue[2].priority, sizeof(Queue)/sizeof(Queue[0]));
+
+	struct pqnode * Qcur;
 	
-	destroy(Queue);
+	Qcur = Queue1;
+	if (Queue1 == NULL)
+		printf("No data entered");
+	printf("%p", Queue1);
+	while(Qcur != NULL)
+	{
+		Qcur = Qcur->next;
+	}
+
+
+	printf("%d %d\n", (*Qcur).element, (*Qcur).priority);
+	
+	
 
 
 	return 0;
