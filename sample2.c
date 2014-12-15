@@ -28,6 +28,7 @@ struct pqnode * create_q(int max_size)
 			Qhead = Qcurrent;
 		else
 			Qprev->next = Qcurrent;
+			
 		
 		Qcurrent->next = NULL;
 		Qprev = Qcurrent;
@@ -41,15 +42,20 @@ struct pqnode * create_q(int max_size)
 }
 
 
-void enqueue(struct pqnode * Queuenode, int x, int p)
+void enqueue(struct pqnode * Queuehead, int x, int p)
 {
-	while(Queuenode != NULL)
-		Queuenode = Queuenode->next;
+	struct pqnode * current;
+	current = Queuehead->next;
 
-	if(Queuenode == NULL)
-	{
-		Queuenode->element = x;
-		Queuenode->priority = p;
+	while(current->next != NULL)
+		current = current->next;
+
+
+	if(current->next == NULL)
+	{	
+		current->element = x;
+		current->priority = p;
+
 	}
 
 }
@@ -71,28 +77,20 @@ int main()
 {
 	
 	struct pqnode * Queue1 = create_q(20);
-	printf("%lu\n", sizeof(Queue1));
 	enqueue(Queue1,10,11);
-	enqueue(Queue1,20,21);
-	enqueue(Queue1,30,31);
-	enqueue(Queue1,40,41);
-	enqueue(Queue1,50,51);
-	enqueue(Queue1,60,61);
 
 
 	struct pqnode * Qcur;
 	
 	Qcur = Queue1;
-	if (Queue1 == NULL)
-		printf("No data entered");
-	printf("%p", Queue1);
-	while(Qcur != NULL)
+
+	while(Qcur->next != NULL)
 	{
 		Qcur = Qcur->next;
+		printf("	%d %d\n", Qcur->element, Qcur->priority);
 	}
 
 
-	printf("%d %d\n", (*Qcur).element, (*Qcur).priority);
 	
 	
 
