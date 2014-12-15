@@ -112,7 +112,8 @@ prev->next is set to current->next and current is freed from memory.
 	}
 	
 	current = Queuehead->next;
-	while(temppriority != current->priority)
+
+	while(temppriority != current->priority || current != NULL)
 	{
 		prev = current;
 		current=current->next;
@@ -125,6 +126,52 @@ prev->next is set to current->next and current is freed from memory.
 	}
 }
 
+
+struct pqnode * peek(struct pqnode * Queuehead)
+{
+
+/* mostly copied from dequeue */
+
+	struct pqnode * current;
+
+	current = Queuehead->next;
+	int temppriority = 0;	
+	
+	while(current->next != NULL)
+	{
+		if(current->priority > temppriority)
+			temppriority = current->priority;
+		
+		current = current->next;
+	}
+
+	while(temppriority != current->priority || current != NULL)
+	{
+		current=current->next;
+	}	
+
+	if(temppriority == current->priority)
+	{
+		return current;
+	}
+	else
+		return NULL;
+}
+
+
+int is_empty(struct pqnode * Queuehead)
+{
+	struct pqnode * current;
+	current = Queuehead->next;
+	
+	while(current->priority == 0)
+	{
+		if(current->next == NULL)
+			return 1;
+		current = current->next;
+	}
+	return 0;
+}
 
 void destroy(struct pqnode * obj)
 {
