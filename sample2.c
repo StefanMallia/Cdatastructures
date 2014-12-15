@@ -47,11 +47,11 @@ void enqueue(struct pqnode * Queuehead, int x, int p)
 	struct pqnode * current;
 	current = Queuehead->next;
 
-	while(current->next != NULL)
+	while(current->priority != 0)
 		current = current->next;
 
 
-	if(current->next == NULL)
+	if(current->priority == 0)
 	{	
 		current->element = x;
 		current->priority = p;
