@@ -167,7 +167,7 @@ int size(linkedlists * linkedlist)
 
 linkedlists * merge(linkedlists *linkedlistQ, linkedlists* linkedlistR)
 {
-	linkedlistQ->maxsize = linkedlistQ->maxsize + linkedlistR->maxsize;
+	linkedlistQ->max_size = linkedlistQ->max_size + linkedlistR->max_size;
 
 	pqnode * current = linkedlistQ->headnode;
 	
@@ -175,7 +175,7 @@ linkedlists * merge(linkedlists *linkedlistQ, linkedlists* linkedlistR)
 		current = current->next;
 	
 	current->next = linkedlistR->headnode;
-	clean(linkedlistR)
+	free(linkedlistR);
 
 	return linkedlistQ;
 }
@@ -186,20 +186,56 @@ void clear(linkedlists * linkedlist)
 	pqnode * current = linkedlist->headnode;
 	pqnode * prev;
 
-	while(current =! NULL)
+	while(current != NULL)
 	{
 		prev = current;
 		current = current->next;
-		free(prev)
+		free(prev);
 	}
 }
 
 
-void store(linkedlists * linkedlist, char* file)
+void store(linkedlists * linkedlist, char* filename)
 {
+	FILE * pFile = fopen(filename, "w");
+	pqnode * Qcur = linkedlist->headnode;
+		
+	fprintf(pFile, "%d\n", linkedlist->maxsize);	
+
+	while(Qcur != NULL)
+	{
+		fprintf(pFile,"%d\n", Qcur->element);
+		Qcur = Qcur->next;
+	}
+	
+
+	fprintf("\\0");
+	Qcur = linkedlist->headnode;
+	
+	while(Qcur != NULL)
+	{
+		fprintf(pFile,"%d\n", Qcur->priority);
+		Qcur = Qcur->next;
+	}
+	
+	fprintf("\\0");
+
+	fclose(pFile);
 	
 
 
+}
+
+linkedlists * load(char* filename)
+{
+	FILE * pFile = fopen(filename, "r")
+	linkedlists * loadedlist;
+
+
+	while()
+	{
+		loadedlist->max_size = fgetc(pFile);
+		
 
 
 
@@ -244,6 +280,8 @@ int main()
 		printf("\t%d\t%d\n", Qcur->element, Qcur->priority);
 		Qcur = Qcur->next;
 	}
+
+	store(linkedlist1, "thisfile");
 
 	
 
