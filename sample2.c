@@ -10,61 +10,62 @@ typedef struct pqnode
 	int element;
 	int priority;
 	struct pqnode * next;   
-   
 }pqnode;
+
 
 typedef struct linkedlists
 {
 	int max_size;
 	struct pqnode * headnode;
-
 }linkedlists;
-
 
 
 linkedlists * create_q(int max_size)
 {
-
-	pqnode * Qhead;
-
-
-	Qhead = (pqnode *) malloc(sizeof(pqnode));
-	Qhead->next = NULL;
-   
-
 	linkedlists * linkedlist = (linkedlists *)malloc(sizeof(linkedlists));
 	linkedlist->max_size = max_size;
-	linkedlist->headnode = Qhead;
-
-
-
+	linkedlist->headnode = NULL;
 
 	return linkedlist;
-
-
 }
 
 
 void enqueue(linkedlists * linkedlist, int x, int p)
 {
+	
 
-
-	pqnode * current;
-
-	current = linkedlist->headnode;
-	int max_size = linkedlist->max_size;
-	int i = 0;
-
-	for(i=0; i<max_size && current->next != NULL; i++)
-		current = current->next;
+	if(linkedlist->headnode == NULL)
+	{
+		linkedlist->headnode = (pqnode *) malloc(sizeof(pqnode));
 		
+		linkedlist->headnode->element = x;
+		linkedlist->headnode->priority = p;
+		linkedlist->headnode->next = NULL;
+	}
+	else		
+	{
+		pqnode * current = linkedlist->headnode;
 
+		int max_size = linkedlist->max_size;
+		int i = 2;
 
-	current->element = x;
-	current->priority = p;
-
-	current->next = (pqnode *) malloc(sizeof(pqnode));
-
+		while(current->next != NULL)
+		{
+			current = current->next;
+			i++;
+		}
+			
+			
+		if(i <= max_size)
+		{
+			current->next = (pqnode *) malloc(sizeof(pqnode));			
+			current = current->next;			
+			
+			current->element = x;
+			current->priority = p;
+			current->next = NULL;
+		}
+	}
 
 }
 
@@ -76,7 +77,7 @@ void dequeue(linkedlists * linkedlist)
 	pqnode * prev;
 	
 	current = linkedlist->headnode;
-	int temppriority = -1;   
+	int temppriority = 0;   
 
 	while(current != NULL)
 	{
@@ -143,7 +144,7 @@ bool is_empty(linkedlists * linkedlist)
 	current = linkedlist->headnode;
    
 
-	if(current->priority == 0 && current->next == NULL)
+	if(current == NULL)
 		return true;
 	else	
 		return false;
@@ -155,7 +156,7 @@ int size(linkedlists * linkedlist)
 	pqnode * current;
 	current = linkedlist->headnode;
 	int count = 0;
-	while(current->next != NULL)
+	while(current != NULL)
 	{
 		count++;
 		current=current->next;
@@ -199,7 +200,7 @@ int main()
 	Qcur = Queue1;
 
 	printf("\nEnqueued:\n\tElement\tPriority\n\n");
-	while(Qcur->next != NULL)
+	while(Qcur != NULL)
 	{
 		printf("\t%d\t%d\n", Qcur->element, Qcur->priority);
 		Qcur = Qcur->next;
@@ -211,7 +212,7 @@ int main()
 	Qcur = Queue1;
 
 	printf("\nDequeue:\n\tElement\tPriority\n\n");
-	while(Qcur->next != NULL)
+	while(Qcur != NULL)
 	{
 		printf("\t%d\t%d\n", Qcur->element, Qcur->priority);
 		Qcur = Qcur->next;
