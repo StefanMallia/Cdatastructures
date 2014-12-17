@@ -153,9 +153,9 @@ bool is_empty(linkedlists * linkedlist)
 
 int size(linkedlists * linkedlist)
 {
-	pqnode * current;
-	current = linkedlist->headnode;
+	pqnode * current = linkedlist->headnode;
 	int count = 0;
+
 	while(current != NULL)
 	{
 		count++;
@@ -164,13 +164,40 @@ int size(linkedlists * linkedlist)
 	return count;
 }
 
-void clear(pqnode * obj)
+
+linkedlists * merge(linkedlists *linkedlistQ, linkedlists* linkedlistR)
 {
-	if(obj)
-		free(obj);
+	linkedlistQ->maxsize = linkedlistQ->maxsize + linkedlistR->maxsize;
+
+	pqnode * current = linkedlistQ->headnode;
+	
+	while(current->next != NULL)
+		current = current->next;
+	
+	current->next = linkedlistR->headnode;
+	clean(linkedlistR)
+
+	return linkedlistQ;
 }
 
 
+void clear(linkedlists * linkedlist)
+{
+	pqnode * current = linkedlist->headnode;
+	pqnode * prev;
+
+	while(current =! NULL)
+	{
+		prev = current;
+		current = current->next;
+		free(prev)
+	}
+}
+
+
+void store(linkedlists * linkedlist, char* file)
+{
+	
 
 
 
