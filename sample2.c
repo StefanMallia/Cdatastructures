@@ -28,7 +28,7 @@ struct linkedlists * create_q(int max_size)
 	struct pqnode * Qhead;
 
 
-	Qhead = (struct pqnode*) malloc(sizeof(struct pqnode));
+	Qhead = (struct pqnode *) malloc(sizeof(struct pqnode));
 	Qhead->next = NULL;
    
 
@@ -48,71 +48,49 @@ struct linkedlists * create_q(int max_size)
 void enqueue(struct linkedlists * linkedlist, int x, int p)
 {
 
-/* creates current struct so that Queuehead input is not modified
 
-iterates and changes to filled elements defined as those with >0 priority
-
-once an empty element is found the 2nd and 3rd arguments are inputted
-
-x is element and p is priority
-
-
-*/
 	struct pqnode * current;
-		
-	
+
 	current = linkedlist->headnode;
+	int max_size = linkedlist->max_size;
+	int i = 0;
 
-	while(current->next != NULL)
-	current = current->next;
+	for(i=0; i<max_size && current->next != NULL; i++)
+		current = current->next;
+		
 
-
-	if(current->next == NULL)
-	{   
 
 	current->element = x;
 	current->priority = p;
 
-	current->next = (struct pqnode*) malloc(sizeof(struct pqnode));
-	current = current->next;
-	current->next = NULL;
+	current->next = (struct pqnode *) malloc(sizeof(struct pqnode));
 
-	}
 
 }
 
-void dequeue(struct pqnode * Queuehead)
+void dequeue(struct linkedlists * linkedlist)
 {
+/*FIFO*/
 
-/* current and prev struct are used to preserve Queuehead original pointer value
-
-temppriority is a temporary value that will change every time a larger priority is found.
-
-while loop scans whole linked list, temppriority should end up being assigned the largest priority.
-
-once largest priority is set to temppriority, another while loop will scan the linked list again to search for the highest priority and stops once largest priority is found.
-
-prev->next is set to current->next and current is freed from memory.
-
-
-*/
 	struct pqnode * current;
 	struct pqnode * prev;
+	
+	current = linkedlist->headnode;
+	int temppriority = -1;   
 
-	current = Queuehead->next;
-	int temppriority = 0;   
-   
-	while(current->next != NULL)
+	while(current != NULL)
 	{
 		if(current->priority > temppriority)
 			temppriority = current->priority;
-       
+					
+	
 		current = current->next;
+
 	}
    
-	current = Queuehead->next;
-
-	while(temppriority != current->priority || current != NULL)
+	current = linkedlist->headnode;
+	
+	while(current->priority != temppriority && current != NULL)
 	{
 		prev = current;
 		current=current->next;
@@ -120,34 +98,35 @@ prev->next is set to current->next and current is freed from memory.
 
 	if(temppriority == current->priority)
 	{
-	prev->next = current->next;
-	free(current);
+		prev->next = current->next;
+		free(current);
 	}
 }
 
 
-struct pqnode * peek(struct pqnode * Queuehead)
+struct pqnode * peek(struct linkedlists * linkedlist)
 {
 
 /* mostly copied from dequeue */
 
 	struct pqnode * current;
 
-	current = Queuehead->next;
+	current = linkedlist->headnode;
 	int temppriority = 0;   
    
-	while(current->next != NULL)
+	while(current != NULL)
 	{
 		if(current->priority > temppriority)
-		temppriority = current->priority;
+			temppriority = current->priority;
        
-	current = current->next;
+		current = current->next;
 	}
 
-	while(temppriority != current->priority || current != NULL)
-		{
-	current=current->next;
-	}   
+	current = linkedlist->headnode;
+
+	while(temppriority != current->priority && current != NULL)
+		current=current->next;
+		
 
 	if(temppriority == current->priority)
 	{
@@ -158,21 +137,31 @@ struct pqnode * peek(struct pqnode * Queuehead)
 }
 
 
-int is_empty(struct pqnode * Queuehead)
+bool is_empty(struct linkedlists * linkedlist)
 {
 	struct pqnode * current;
-	current = Queuehead->next;
+	current = linkedlist->headnode;
    
-	while(current->priority == 0)
-	{
-		if(current->next == NULL)
-			return 1;
-		current = current->next;
-	}
-	return 0;
+
+	if(current->priority == 0 && current->next == NULL)
+		return true;
+	else	
+		return false;
 }
 
-void destroy(struct pqnode * obj)
+
+int size(struct linkedlists * linkedlist)
+{
+	struct pqnode * current;
+	current = linkedlist->headnode;
+	int count = 0;
+	while(current != NULL)
+	{
+		count++;
+		current=current->next;
+
+
+void clear(struct pqnode * obj)
 {
 	if(obj)
 		free(obj);
@@ -184,11 +173,12 @@ void destroy(struct pqnode * obj)
 
 
 
+
 int main()
 {
    
 	struct linkedlists * linkedlist1 = create_q(20);
-	struct pqnode * Queue1 = linkedlist1->headnode;
+	
 	
 	enqueue(linkedlist1,10,11);
 	enqueue(linkedlist1,20,21);
@@ -200,23 +190,34 @@ int main()
 	enqueue(linkedlist1,40,41);
 	enqueue(linkedlist1,40,61);
 	enqueue(linkedlist1,40,41);
-
    
 	struct pqnode * Qcur;
-   
+   	
+	struct pqnode * Queue1 = linkedlist1->headnode;
 	Qcur = Queue1;
 
-	printf("\n\tElement\tPriority\n\n");
+	printf("\nEnqueued:\n\tElement\tPriority\n\n");
 	while(Qcur->next != NULL)
 	{
 		printf("\t%d\t%d\n", Qcur->element, Qcur->priority);
 		Qcur = Qcur->next;
 	}
 
-	//dequeue(Queue1);
+	printf("\n\nPeek: %d\t%d\n", peek(linkedlist1)->element, peek(linkedlist1)->priority);
+
+	dequeue(linkedlist1);
+	Qcur = Queue1;
+
+	printf("\nDequeue:\n\tElement\tPriority\n\n");
+	while(Qcur->next != NULL)
+	{
+		printf("\t%d\t%d\n", Qcur->element, Qcur->priority);
+		Qcur = Qcur->next;
+	}
+
+	
 
 
   
-
 	return 0;
 }
