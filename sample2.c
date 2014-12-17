@@ -5,9 +5,6 @@
 #include <stdlib.h> /* has the malloc prototype */
 #include <stdio.h>
 
-
-
-
 struct pqnode
 {
 	int element;
@@ -16,7 +13,6 @@ struct pqnode
    
 };
 
-
 struct linkedlists
 {
 	int max_size;
@@ -24,28 +20,16 @@ struct linkedlists
 
 };
 
+
+
 struct linkedlists * create_q(int max_size)
 {
-/* takes max_size as input and creates a linked list with max_size empty arrays
-
-Qhead is set to NULL and Qprev and Qcurrent are just declared without assigning values.
-
-Qcurrent is assigned a memory space and Qhead is assigned Qcurrent
-
-Qcurrent is assigned memory space on a loop of max_size iterations and the
-previous element's ->next is assigned Qcurrent.
-
-Returns the first structure Qhead which is only a pointer with no values
-
-*/
 
 	struct pqnode * Qhead;
-	struct pqnode * Qelement1;
+
 
 	Qhead = (struct pqnode*) malloc(sizeof(struct pqnode));
-	Qelement1 = (struct pqnode*) malloc(sizeof(struct pqnode));
-	Qelement1->next = NULL;
-	Qhead = Qelement1;
+	Qhead->next = NULL;
    
 
 	struct linkedlists * linkedlist = (struct linkedlists *)malloc(sizeof(struct linkedlists));
@@ -61,7 +45,7 @@ Returns the first structure Qhead which is only a pointer with no values
 }
 
 
-void enqueue(struct pqnode * Queuehead, int x, int p)
+void enqueue(struct linkedlists * linkedlist, int x, int p)
 {
 
 /* creates current struct so that Queuehead input is not modified
@@ -75,12 +59,12 @@ x is element and p is priority
 
 */
 	struct pqnode * current;
-	current = Queuehead->next;
+		
+	
+	current = linkedlist->headnode;
 
 	while(current->next != NULL)
 	current = current->next;
-
-   
 
 
 	if(current->next == NULL)
@@ -203,21 +187,21 @@ void destroy(struct pqnode * obj)
 int main()
 {
    
-	struct pqnode * Queue1 = create_q(20)->headnode;
-	enqueue(Queue1,10,11);
-	enqueue(Queue1,20,21);
-	enqueue(Queue1,30,31);
-	enqueue(Queue1,40,41);
-	enqueue(Queue1,40,41);
-	enqueue(Queue1,40,51);
-	enqueue(Queue1,40,41);
-	enqueue(Queue1,40,41);
-	enqueue(Queue1,40,61);
-	enqueue(Queue1,40,41);
+	struct linkedlists * linkedlist1 = create_q(20);
+	struct pqnode * Queue1 = linkedlist1->headnode;
+	
+	enqueue(linkedlist1,10,11);
+	enqueue(linkedlist1,20,21);
+	enqueue(linkedlist1,30,31);
+	enqueue(linkedlist1,40,41);
+	enqueue(linkedlist1,40,41);
+	enqueue(linkedlist1,40,51);
+	enqueue(linkedlist1,40,41);
+	enqueue(linkedlist1,40,41);
+	enqueue(linkedlist1,40,61);
+	enqueue(linkedlist1,40,41);
 
    
-
-
 	struct pqnode * Qcur;
    
 	Qcur = Queue1;
@@ -225,23 +209,14 @@ int main()
 	printf("\n\tElement\tPriority\n\n");
 	while(Qcur->next != NULL)
 	{
-		Qcur = Qcur->next;
 		printf("\t%d\t%d\n", Qcur->element, Qcur->priority);
+		Qcur = Qcur->next;
 	}
 
 	//dequeue(Queue1);
 
 
-   
-	Qcur = Queue1;
-	printf("\n\tElement\tPriority\n\n");
-	while(Qcur->next != NULL)
-	{
-		Qcur = Qcur->next;
-		printf("\t%d\t%d\n", Qcur->element, Qcur->priority);
-	}
-   
-
+  
 
 	return 0;
 }
