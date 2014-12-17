@@ -5,16 +5,26 @@
 #include <stdlib.h> /* has the malloc prototype */
 #include <stdio.h>
 
-struct pqnode 
+
+
+
+struct pqnode
 {
-	int element;
-	int priority;
-	struct pqnode * next;	
-	
+    int element;
+    int priority;
+    struct pqnode * next;   
+   
 };
 
 
-struct pqnode * create_q(int max_size)
+struct linkedlists
+{
+    int max_size;
+    struct pqnode * headnode;
+
+}
+
+struct linkedlists * create_q(int max_size)
 {
 /* takes max_size as input and creates a linked list with max_size empty arrays
 
@@ -28,26 +38,24 @@ previous element's ->next is assigned Qcurrent.
 Returns the first structure Qhead which is only a pointer with no values
 
 */
-	struct pqnode * Qhead = NULL;
-	struct pqnode * Qprev, * Qcurrent;
 
-	int i=0;
-	for(i=0; i<max_size; i++)
-	{
-		Qcurrent = (struct pqnode *) malloc(sizeof(struct pqnode));
-		if (Qhead == NULL) /*first structure*/
-			Qhead = Qcurrent;
-		else
-			Qprev->next = Qcurrent;
-			
-		
-		Qcurrent->next = NULL;
-		Qprev = Qcurrent;
-	}
+    struct pqnode * Qhead;
+
+
+    Qhead = (struct pqnode*) malloc(sizeof(struct pqnode));
+    Qelement1 = (struct pqnode*) malloc(sizeof(struct pqnode));
+    Qelement->next = NULL;
+    Qhead->next = Qelement1;
+   
+
+    struct linkedlists * linkedlist = (struct linkedlists *)malloc(sizeof(linkedlists));
+    linkedlist->max_size = max_size;
+    linkedlist->headnode = Qhead;
 
 
 
-	return Qhead;
+
+    return linkedlist;
 
 
 }
@@ -66,19 +74,26 @@ x is element and p is priority
 
 
 */
-	struct pqnode * current;
-	current = Queuehead->next;
+    struct pqnode * current;
+    current = Queuehead->next
 
-	while(current->priority != 0)
-		current = current->next;
+    while(current->next != NULL)
+        current = current->next;
+
+   
 
 
-	if(current->priority == 0)
-	{	
-		current->element = x;
-		current->priority = p;
+    if(current->next == NULL)
+    {   
 
-	}
+        current->element = x;
+        current->priority = p;
+
+        current->next = (struct pqnode*) malloc(sizeof(struct pqnode));
+        current = current->next;
+        current->next = NULL;
+
+    }
 
 }
 
@@ -97,33 +112,33 @@ prev->next is set to current->next and current is freed from memory.
 
 
 */
-	struct pqnode * current;
-	struct pqnode * prev;
+    struct pqnode * current;
+    struct pqnode * prev;
 
-	current = Queuehead->next;
-	int temppriority = 0;	
-	
-	while(current->next != NULL)
-	{
-		if(current->priority > temppriority)
-			temppriority = current->priority;
-		
-		current = current->next;
-	}
-	
-	current = Queuehead->next;
+    current = Queuehead->next;
+    int temppriority = 0;   
+   
+    while(current->next != NULL)
+    {
+        if(current->priority > temppriority)
+            temppriority = current->priority;
+       
+        current = current->next;
+    }
+   
+    current = Queuehead->next;
 
-	while(temppriority != current->priority || current != NULL)
-	{
-		prev = current;
-		current=current->next;
-	}	
+    while(temppriority != current->priority || current != NULL)
+    {
+        prev = current;
+        current=current->next;
+    }   
 
-	if(temppriority == current->priority)
-	{
-		prev->next = current->next;
-		free(current);
-	}
+    if(temppriority == current->priority)
+    {
+        prev->next = current->next;
+        free(current);
+    }
 }
 
 
@@ -132,45 +147,45 @@ struct pqnode * peek(struct pqnode * Queuehead)
 
 /* mostly copied from dequeue */
 
-	struct pqnode * current;
+    struct pqnode * current;
 
-	current = Queuehead->next;
-	int temppriority = 0;	
-	
-	while(current->next != NULL)
-	{
-		if(current->priority > temppriority)
-			temppriority = current->priority;
-		
-		current = current->next;
-	}
+    current = Queuehead->next;
+    int temppriority = 0;   
+   
+    while(current->next != NULL)
+    {
+        if(current->priority > temppriority)
+            temppriority = current->priority;
+       
+        current = current->next;
+    }
 
-	while(temppriority != current->priority || current != NULL)
-	{
-		current=current->next;
-	}	
+    while(temppriority != current->priority || current != NULL)
+    {
+        current=current->next;
+    }   
 
-	if(temppriority == current->priority)
-	{
-		return current;
-	}
-	else
-		return NULL;
+    if(temppriority == current->priority)
+    {
+        return current;
+    }
+    else
+        return NULL;
 }
 
 
 int is_empty(struct pqnode * Queuehead)
 {
-	struct pqnode * current;
-	current = Queuehead->next;
-	
-	while(current->priority == 0)
-	{
-		if(current->next == NULL)
-			return 1;
-		current = current->next;
-	}
-	return 0;
+    struct pqnode * current;
+    current = Queuehead->next;
+   
+    while(current->priority == 0)
+    {
+        if(current->next == NULL)
+            return 1;
+        current = current->next;
+    }
+    return 0;
 }
 
 void destroy(struct pqnode * obj)
@@ -187,46 +202,46 @@ void destroy(struct pqnode * obj)
 
 int main()
 {
-	
-	struct pqnode * Queue1 = create_q(20);
-	enqueue(Queue1,10,11);
-	enqueue(Queue1,20,21);
-	enqueue(Queue1,30,31);
-	enqueue(Queue1,40,41);
-	enqueue(Queue1,40,41);
-	enqueue(Queue1,40,51);
-	enqueue(Queue1,40,41);
-	enqueue(Queue1,40,41);
-	enqueue(Queue1,40,61);
-	enqueue(Queue1,40,41);
+   
+    struct pqnode * Queue1 = create_q(20);
+    enqueue(Queue1,10,11);
+    enqueue(Queue1,20,21);
+    enqueue(Queue1,30,31);
+    enqueue(Queue1,40,41);
+    enqueue(Queue1,40,41);
+    enqueue(Queue1,40,51);
+    enqueue(Queue1,40,41);
+    enqueue(Queue1,40,41);
+    enqueue(Queue1,40,61);
+    enqueue(Queue1,40,41);
 
-	
-
-
-	struct pqnode * Qcur;
-	
-	Qcur = Queue1;
-
-	printf("\n\tElement\tPriority\n\n");
-	while(Qcur->next != NULL)
-	{
-		Qcur = Qcur->next;
-		printf("\t%d\t%d\n", Qcur->element, Qcur->priority);
-	}
-
-	dequeue(Queue1);
+   
 
 
-	
-	Qcur = Queue1;
-	printf("\n\tElement\tPriority\n\n");
-	while(Qcur->next != NULL)
-	{
-		Qcur = Qcur->next;
-		printf("\t%d\t%d\n", Qcur->element, Qcur->priority);
-	}
-	
+    struct pqnode * Qcur;
+   
+    Qcur = Queue1;
+
+    printf("\n\tElement\tPriority\n\n");
+    while(Qcur->next != NULL)
+    {
+        Qcur = Qcur->next;
+        printf("\t%d\t%d\n", Qcur->element, Qcur->priority);
+    }
+
+    dequeue(Queue1);
 
 
-	return 0;
+   
+    Qcur = Queue1;
+    printf("\n\tElement\tPriority\n\n");
+    while(Qcur->next != NULL)
+    {
+        Qcur = Qcur->next;
+        printf("\t%d\t%d\n", Qcur->element, Qcur->priority);
+    }
+   
+
+
+    return 0;
 }
