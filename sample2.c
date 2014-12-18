@@ -195,46 +195,68 @@ void clear(linkedlists * linkedlist)
 }
 
 
-void store(linkedlists * linkedlist, char* filename)
+void store(linkedlists * linkedlist, char * filename)
 {
-	FILE * pFile = fopen(filename, "w");
-	pqnode * Qcur = linkedlist->headnode;
-		
-	fprintf(pFile, "%d\n", linkedlist->maxsize);	
+	//char filetype[] = ".bin";	
+	//strncat(filelol,filetype,4);
 
-	while(Qcur != NULL)
+	FILE * pFile = fopen(filename, "wb");
+	
+	
+	if (pFile != NULL)
 	{
-		fprintf(pFile,"%d\n", Qcur->element);
-		Qcur = Qcur->next;
+		pqnode * Current = linkedlist->headnode;
+		pqnode * holdnext = NULL;
+
+		fseek(pFile, 0, SEEK_END);
+		fwrite(linkedlist, sizeof(linkedlist), 1, pFile);
+
+		while(Current != NULL)
+		{
+			holdnext = Current->next;
+			Current->next = NULL;
+
+			fseek(pFile, 0, SEEK_END);
+			fwrite(Current, sizeof(pqnode), 0, pFile);
+
+			printf("Writing:%d %d to file\n", Current->element, Current->priority);
+
+			Current->next = holdnext;
+			
+			Current = Current->next;
+			
+			holdnext = NULL;
+
+		}
+		fclose(pFile);
+
+
 	}
-	
-
-	fprintf("\\0");
-	Qcur = linkedlist->headnode;
-	
-	while(Qcur != NULL)
-	{
-		fprintf(pFile,"%d\n", Qcur->priority);
-		Qcur = Qcur->next;
-	}
-	
-	fprintf("\\0");
-
-	fclose(pFile);
-	
-
-
+	else
+		printf("Error Writing/n");		
 }
 
-linkedlists * load(char* filename)
+
+
+linkedlists * load(char filename[])
 {
-	FILE * pFile = fopen(filename, "r")
-	linkedlists * loadedlist;
+	FILE * pFile = fopen(filename, "rb");
+	linkedlists * linkedlist = NULL;
+	//pqnode * node = NULL;	
 
-
-	while()
+	if(pFile != NULL)
 	{
-		loadedlist->max_size = fgetc(pFile);
+		linkedlist = (linkedlists *) malloc(sizeof(linkedlists));
+		fseek(pFile, 0, SEEK_SET);
+		int size = fread(linkedlist, sizeof(linkedlist), 1, pFile);
+		printf("size of elements read %d\n", size);
+		fclose(pFile); 
+	}
+	else
+		printf("Error with read");
+
+	return linkedlist;
+}
 		
 
 
@@ -243,7 +265,7 @@ linkedlists * load(char* filename)
 int main()
 {
    
-	linkedlists * linkedlist1 = create_q(20);
+	linkedlists * linkedlist1 = create_q(25);
 	
 	
 	enqueue(linkedlist1,10,11);
@@ -281,7 +303,10 @@ int main()
 		Qcur = Qcur->next;
 	}
 
-	store(linkedlist1, "thisfile");
+	store(linkedlist1, "thisfile.bin");
+	linkedlists * qu1 = load("thisfile.bin");
+
+	printf("%d %d", qu1->max_size, qu1->headnode->element);
 
 	
 
