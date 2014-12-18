@@ -207,9 +207,19 @@ void store(linkedlists * linkedlist, char * filename)
 	{
 		pqnode * Current = linkedlist->headnode;
 		pqnode * holdnext = NULL;
+		
+		linkedlist->headnode = NULL;
 
 		fseek(pFile, 0, SEEK_END);
-		fwrite(linkedlist, sizeof(linkedlist), 1, pFile);
+		fwrite(linkedlist, sizeof(linkedlists), 1, pFile);
+
+		linkedlist->headnode = Current;	
+
+		int numnodes = size(linkedlist);
+		fseek(pFile, 0, SEEK_END);
+		fwrite(&numnodes, sizeof(int), 1, pFile);
+ 
+
 
 		while(Current != NULL)
 		{
@@ -217,20 +227,14 @@ void store(linkedlists * linkedlist, char * filename)
 			Current->next = NULL;
 
 			fseek(pFile, 0, SEEK_END);
-			fwrite(Current, sizeof(pqnode), 0, pFile);
+			fwrite(Current, sizeof(pqnode), 1, pFile);
 
-			printf("Writing:%d %d to file\n", Current->element, Current->priority);
 
 			Current->next = holdnext;
 			
 			Current = Current->next;
-			
-			holdnext = NULL;
-
 		}
 		fclose(pFile);
-
-
 	}
 	else
 		printf("Error Writing/n");		
@@ -241,16 +245,42 @@ void store(linkedlists * linkedlist, char * filename)
 linkedlists * load(char filename[])
 {
 	FILE * pFile = fopen(filename, "rb");
-	linkedlists * linkedlist = NULL;
-	//pqnode * node = NULL;	
+	linkedlists * linkedlist;
+		
 
 	if(pFile != NULL)
 	{
 		linkedlist = (linkedlists *) malloc(sizeof(linkedlists));
 		fseek(pFile, 0, SEEK_SET);
-		int size = fread(linkedlist, sizeof(linkedlist), 1, pFile);
-		printf("size of elements read %d\n", size);
-		fclose(pFile); 
+		fread(linkedlist, sizeof(linkedlist), 1, pFile);
+				
+		int numnodes;
+		fseek(pFile, sizeof(linkedlists), SEEK_SET);
+		fread(&numnodes, sizeof(int), 1, pFile); 
+		
+		if(numnodes > 0)
+		{
+			pqnode * current = NULL;
+		
+			linkedlist->headnode = (pqnode *) malloc(sizeof(pqnode));
+			current = linkedlist->headnode;
+
+			fseek(pFile, sizeof(linkedlists)+sizeof(int), SEEK_SET);
+			fread(current, sizeof(pqnode), 1, pFile);
+			current->next = NULL; 
+
+			int i;
+			for(i = 1; i < numnodes; i++)
+			{
+				current->next = (pqnode *) malloc(sizeof(pqnode));
+				current = current->next;			
+			
+				fread(current, sizeof(pqnode), 1, pFile);
+				
+				current->next = NULL;		
+			}
+		}
+		fclose(pFile);
 	}
 	else
 		printf("Error with read");
@@ -263,10 +293,8 @@ linkedlists * load(char filename[])
 
 
 int main()
-{
-   
-	linkedlists * linkedlist1 = create_q(25);
-	
+{   
+	linkedlists * linkedlist1 = create_q(20);	
 	
 	enqueue(linkedlist1,10,11);
 	enqueue(linkedlist1,20,21);
@@ -274,6 +302,7 @@ int main()
 	enqueue(linkedlist1,40,41);
 	enqueue(linkedlist1,40,41);
 	enqueue(linkedlist1,40,51);
+	enqueue(linkedlist1,40,100);
 	enqueue(linkedlist1,40,41);
 	enqueue(linkedlist1,40,41);
 	enqueue(linkedlist1,40,61);
@@ -283,7 +312,7 @@ int main()
    	
 	pqnode * Queue1 = linkedlist1->headnode;
 	Qcur = Queue1;
-
+	
 	printf("\nEnqueued:\n\tElement\tPriority\n\n");
 	while(Qcur != NULL)
 	{
@@ -292,8 +321,9 @@ int main()
 	}
 
 	printf("\n\nPeek: %d\t%d\n", peek(linkedlist1)->element, peek(linkedlist1)->priority);
+printf("\n\nSize: %d\n", size(linkedlist1));
 
-	dequeue(linkedlist1);
+	//dequeue(linkedlist1);
 	Qcur = Queue1;
 
 	printf("\nDequeue:\n\tElement\tPriority\n\n");
@@ -306,7 +336,17 @@ int main()
 	store(linkedlist1, "thisfile.bin");
 	linkedlists * qu1 = load("thisfile.bin");
 
-	printf("%d %d", qu1->max_size, qu1->headnode->element);
+	pqnode * Queue2 = qu1->headnode;
+	Qcur = Queue2;
+	
+	printf("\nMax size: %d\tPeek: %d\t%d\n", qu1->max_size, peek(qu1)->element, peek(qu1)->priority);
+	printf("Number of elements: %d\n", size(qu1));
+	printf("\nEnqueued in loaded queue:\n\tElement\tPriority\n\n");
+	while(Qcur != NULL)
+	{
+		printf("\t%d\t%d\n", Qcur->element, Qcur->priority);
+		Qcur = Qcur->next;
+	}
 
 	
 
