@@ -59,30 +59,42 @@ void sort(RingBuffer * rb)
 //Selection Sort 
 
 	Element * temp = (Element *) malloc(sizeof(Element));
-	int i = rb->start;
-	int j = rb->start+1;
-	int indexstore;
+	Element * rbnew = calloc(rb->max_size, sizeof(Element));
+	Element empty = {.elem = 0, .priority = 0};
+	int indexmemory;
+	int i;
+	int j;
 
-	while(i % rb->max_size != rb->end % rb->max_size)
+	for(i = 0; i < size(rb); i++)
 	{
-		*temp = rb->elems[i];
-		indexstore = i;
-		while(j % rb->max_size != rb->end % rb->max_size)
+		*temp = rb->elems[rb->start];
+		indexmemory = rb->start;
+		for(j = 1; j < size(rb); j++)
 		{
-			if(rb->elems[j].priority > temp->priority)
+			if(rb->elems[(rb->start + j) % rb->max_size].priority > temp->priority)
 			{
-				*temp = rb->elems[j];
-				indexstore = j;
+				*temp = rb->elems[(rb->start + j) % rb->max_size];
+				indexmemory = (rb->start + j) % rb->max_size;
 			}
-			j = (j+1) % rb->max_size;
 		}
-		rb->elems[indexstore] = rb->elems[i];
-		rb->elems[i] = *temp;
+		//printf("rb->elem[indexmemory] = %d %d\n", rb->elems[indexmemory].priority, rb->elems[indexmemory].elem);
+		rb->elems[indexmemory] = empty;
 		
-		i = (i + 1) % rb->max_size;
-		j = (i + 1) % rb->max_size;
 
+		//printf("rb->elem[indexmemory] = %d %d\n", rb->elems[indexmemory].priority, rb->elems[indexmemory].elem);
+		rbnew[(rb->start+i) % rb->max_size] = *temp;
 	}
+	//free(rb->elems);
+	//rb->elems = calloc(rb->max_size, sizeof(Element));
+	//for(i = 0; i < size(rb); i++)
+	//{
+	//	rb->elems[rb->start+i] = rbnew[rb->start+i];
+	//	printf("here: %d %d", rbnew[rb->start+i].elem, rbnew[rb->start+i].priority);
+		
+	//}
+	memcpy(rb->elems, rbnew, sizeof(Element)*rb->max_size);
+
+	free(rbnew);
 }
 
 int size(RingBuffer * rb)
@@ -98,83 +110,25 @@ int size(RingBuffer * rb)
 	return count;
 }
 
-/*
-void dequeue(linkedlists * linkedlist)
+
+void dequeue(RingBuffer * rb)
 {
-
-
-	rbnode * current;
-	rbnode * prev;
-	
-	current = linkedlist->headnode;
-	int temppriority = 0;   
-
-	while(current != NULL)
-	{
-		if(current->priority > temppriority)
-			temppriority = current->priority;
-					
-	
-		current = current->next;
-
-	}
-   
-	current = linkedlist->headnode;
-	
-	while(current->priority != temppriority && current != NULL)
-	{
-		prev = current;
-		current=current->next;
-	}   
-
-	if(temppriority == current->priority)
-	{
-		prev->next = current->next;
-		free(current);
-	}
-}
-
-
-rbnode * peek(linkedlists * linkedlist)
-{
-
-// mostly copied from dequeue 
-
-	rbnode * current;
-
-	current = linkedlist->headnode;
-	int temppriority = 0;   
-   
-	while(current != NULL)
-	{
-		if(current->priority > temppriority)
-			temppriority = current->priority;
-       
-		current = current->next;
-	}
-
-	current = linkedlist->headnode;
-
-	while(temppriority != current->priority && current != NULL)
-		current=current->next;
-		
-
-	if(temppriority == current->priority)
-	{
-		return current;
-	}
+	if(rb->start % rb->max_size != rb->end % rb->max_size)
+		rb->start++;
 	else
-		return NULL;
+		printf("\nQueue is empty\n");
 }
 
 
-bool is_empty(linkedlists * linkedlist)
+Element peek(RingBuffer * rb)
 {
-	rbnode * current;
-	current = linkedlist->headnode;
-   
+	return rb->elems[rb->start];
+}
 
-	if(current == NULL)
+
+bool is_empty(RingBuffer * rb)
+{
+	if(rb->start == rb->end)
 		return true;
 	else	
 		return false;
@@ -184,37 +138,42 @@ bool is_empty(linkedlists * linkedlist)
 
 
 
-linkedlists * merge(linkedlists *linkedlistQ, linkedlists* linkedlistR)
+RingBuffer * merge(RingBuffer * rb1, RingBuffer * rb2)
 {
-	linkedlistQ->max_size = linkedlistQ->max_size + linkedlistR->max_size;
-
-	rbnode * current = linkedlistQ->headnode;
+	RingBuffer * rbnew = calloc(1, sizeof(RingBuffer));
+	rbnew->max_size = rb1->max_size + rb2->max_size - 1;
+	rbnew->start = 0;
+	rbnew->end = 0;
+	rbnew->elems = calloc(rbnew->max_size, sizeof(Element));
 	
-	while(current->next != NULL)
-		current = current->next;
-	
-	current->next = linkedlistR->headnode;
-	free(linkedlistR);
-
-	return linkedlistQ;
-}
-
-
-void clear(linkedlists * linkedlist)
-{
-	rbnode * current = linkedlist->headnode;
-	rbnode * prev;
-
-	while(current != NULL)
+	int i;
+	for(i = 0; i < size(rb1); i++)
 	{
-		prev = current;
-		current = current->next;
-		free(prev);
+		rbnew->elems[i] = rb1->elems[(rb1->start + i) % rb1->max_size];
+		rbnew->end = (rbnew->end + 1) % rbnew->max_size;
 	}
+
+	for(i = 0; i < size(rb2); i++)
+	{	
+		rbnew->elems[(size(rb1) + i) % rb2->max_size] = rb2->elems[(rb2->start + i) % rb2->max_size];
+		rbnew->end = (rbnew->end + 1) % rbnew->max_size;
+	}
+
+	//sort(rbnew);
+	
+
+	return rbnew;
 }
 
 
-void store(linkedlists * linkedlist, char * filename)
+void clear(RingBuffer * rb)
+{
+	rb->start = 0;
+	rb->end = 0;
+}
+
+
+void store(RingBuffer * rb, char * filename)
 {
 	//char filetype[] = ".bin";	
 	//strncat(filelol,filetype,4);
@@ -224,35 +183,10 @@ void store(linkedlists * linkedlist, char * filename)
 	
 	if (pFile != NULL)
 	{
-		rbnode * Current = linkedlist->headnode;
-		rbnode * holdnext = NULL;
-		
-		linkedlist->headnode = NULL;
 
 		fseek(pFile, 0, SEEK_END);
-		fwrite(linkedlist, sizeof(linkedlists), 1, pFile);
+		fwrite(rb, sizeof(RingBuffer), 1, pFile);
 
-		linkedlist->headnode = Current;	
-
-		int numnodes = size(linkedlist);
-		fseek(pFile, 0, SEEK_END);
-		fwrite(&numnodes, sizeof(int), 1, pFile);
- 
-
-
-		while(Current != NULL)
-		{
-			holdnext = Current->next;
-			Current->next = NULL;
-
-			fseek(pFile, 0, SEEK_END);
-			fwrite(Current, sizeof(rbnode), 1, pFile);
-
-
-			Current->next = holdnext;
-			
-			Current = Current->next;
-		}
 		fclose(pFile);
 	}
 	else
@@ -261,69 +195,46 @@ void store(linkedlists * linkedlist, char * filename)
 
 
 
-linkedlists * load(char filename[])
+RingBuffer * load(char filename[])
 {
 	FILE * pFile = fopen(filename, "rb");
-	linkedlists * linkedlist;
+	RingBuffer * rb;
 		
 
 	if(pFile != NULL)
 	{
-		linkedlist = (linkedlists *) malloc(sizeof(linkedlists));
+		rb = calloc(1, sizeof(RingBuffer));
 		fseek(pFile, 0, SEEK_SET);
-		fread(linkedlist, sizeof(linkedlist), 1, pFile);
-				
-		int numnodes;
-		fseek(pFile, sizeof(linkedlists), SEEK_SET);
-		fread(&numnodes, sizeof(int), 1, pFile); 
-		
-		if(numnodes > 0)
-		{
-			rbnode * current = NULL;
-		
-			linkedlist->headnode = (rbnode *) malloc(sizeof(rbnode));
-			current = linkedlist->headnode;
+		fread(rb, sizeof(RingBuffer), 1, pFile);
 
-			fseek(pFile, sizeof(linkedlists)+sizeof(int), SEEK_SET);
-			fread(current, sizeof(rbnode), 1, pFile);
-			current->next = NULL; 
-
-			int i;
-			for(i = 1; i < numnodes; i++)
-			{
-				current->next = (rbnode *) malloc(sizeof(rbnode));
-				current = current->next;			
-			
-				fread(current, sizeof(rbnode), 1, pFile);
-				
-				current->next = NULL;		
-			}
-		}
 		fclose(pFile);
 	}
 	else
 		printf("Error with read");
 
-	return linkedlist;
+	return rb;
 }
 		
-
-*/
 
 
 int main()
 {   
-	RingBuffer * ring1 = create_q(3);
+	RingBuffer * ring1 = create_q(4);
 
 
+	enqueue(ring1, 1, 71);
+	enqueue(ring1, 2, 71);
+	enqueue(ring1, 3, 71);
+	enqueue(ring1, 4, 71);
+	enqueue(ring1, 5, 100);
 
 
 	enqueue(ring1, 10, 71);
 	enqueue(ring1, 15, 61);
-	enqueue(ring1, 16, 11);
+/*	enqueue(ring1, 16, 11);
 	enqueue(ring1, 12, 21);
 	enqueue(ring1, 62, 31);
-/*	enqueue(ring1, 24, 61);
+	enqueue(ring1, 24, 61);
 	enqueue(ring1, 77, 65);
 	enqueue(ring1, 24, 616);
 	enqueue(ring1, 36, 67);
@@ -331,18 +242,26 @@ int main()
 	enqueue(ring1, 27, 41);
 	enqueue(ring1, 64, 61);
 	enqueue(ring1, 54, 21);
-*/
+
 	printf("Size of this queue: %d", size(ring1));
 
-	
-	
- 
+*/
+	RingBuffer * ring2 = create_q(4);
+
+	enqueue(ring2, 5, 100);
+	enqueue(ring2, 10, 71);
+	enqueue(ring2, 15, 61);
+
+
+
 
    	
 	Element * Queue1 = ring1->elems;
 	int i = 0;
+
+	printf("\npeek ring 1: element: %d\tpriority: %d\n", peek(ring1).elem, peek(ring1).priority);
 	
-	printf("\nEnqueued:\n\tElement\tPriority\n\n");
+	printf("\nEnqueuedring 1:\n\tElement\tPriority\n\n");
 	while(i<size(ring1))
 	{
 		int position = (ring1->start+i) % ring1->max_size;
@@ -350,10 +269,80 @@ int main()
 		i++;
 	}
 
+	Element * Queue2 = ring2->elems;
+	i = 0;
 
+	printf("\npeek ring 2: element: %d\tpriority: %d\n", peek(ring2).elem, peek(ring2).priority);
 	
+	printf("\nEnqueued ring 2:\n\tElement\tPriority\n\n");
+	while(i<size(ring2))
+	{
+		int position = (ring2->start+i) % ring2->max_size;
+		printf("\t%d\t%d\n", Queue2[position].elem, Queue2[position].priority);
+		i++;
+	}
+
+	RingBuffer * ring3 = merge(ring1, ring2);
 
 
- 
+
+
+
+
+	Element * Queue3 = ring3->elems;
+	i = 0;
+
+	printf("\npeek ring 3: element: %d\tpriority: %d\n", peek(ring3).elem, peek(ring3).priority);
+	
+	printf("\nEnqueued ring 3:\n\tElement\tPriority\n\n");
+	while(i<size(ring3))
+	{
+		int position = (ring3->start+i) % ring3->max_size;
+		printf("\t%d\t%d\n", Queue3[position].elem, Queue3[position].priority);
+		i++;
+	}
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+		dequeue(ring1);dequeue(ring1);	dequeue(ring1);	dequeue(ring1); dequeue(ring1);	
+		i = 0;
+
+		printf("\nEnqueued ring 1:\n\tElement\tPriority\n\n");
+	while(i<size(ring1))
+	{
+		int position = (ring1->start+i) % ring1->max_size;
+		printf("\t%d\t%d\n", Queue1[position].elem, Queue1[position].priority);
+		i++;
+	}
+*/
+	store(ring1, "ring.bin");
+	RingBuffer * ring4 = load("ring.bin");
+
+
+	Element * Queue4 = ring4->elems;
+	i = 0;
+
+	printf("\npeek ring 4: element: %d\tpriority: %d\n", peek(ring4).elem, peek(ring4).priority);
+	
+	printf("\nEnqueued ring 4:\n\tElement\tPriority\n\n");
+	while(i<size(ring4))
+	{
+		int position = (ring4->start+i) % ring4->max_size;
+		printf("\t%d\t%d\n", Queue4[position].elem, Queue4[position].priority);
+		i++;
+	}
+
+
+
 	return 0;
 }

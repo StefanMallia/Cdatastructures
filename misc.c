@@ -5,8 +5,9 @@
  
  
 int main(int argc, char **argv) {
-    
-	printf("-1 modulo 5 = %d", -1%5);
+	float a = -1;
+	float b = 5;
+	printf("-1 modulo 5 = %f\n", a-(a/b)*b);
 	
     return 0;
-}
+} 
