@@ -21,6 +21,9 @@ typedef struct
 }
 RingBuffer;
 
+void sort(RingBuffer * rb);
+int size(RingBuffer * rb);
+
 
 
 RingBuffer * create_q(int max_size)
@@ -43,37 +46,47 @@ void enqueue(RingBuffer * rb, int x, int p)
 	rb->elems[rb->end].priority = p;
 	rb->end = (rb->end + 1) % rb->max_size;
 	if (rb->end == rb->start)
-	{		
-		//Element emptynode = {0,0};
-		//rb->elems[rb->start] = emptynode;		
 		rb->start = (rb->start + 1) % rb->max_size;
-	}
-/*
-	int temppriority;
-	int tempelement;
 
-	int i=1;
-	while(rb->elems[rb->end-i].priority > rb->elems[rb->end-i-1].priority)
-	{
-		temppriority = rb->elems[rb->end-i].priority;
-		tempelement = rb->elems[rb->end-i].elem;
-		rb->elems[rb->end-i].priority = rb->elems[rb->end-i-1].priority;
-		rb->elems[rb->end-i].elem = rb->elems[rb->end-i-1].elem;
-		rb->elems[rb->end-i-1].priority = temppriority;
-		rb->elems[rb->end-i-1].elem = tempelement;
-		i++;
-	}
-*/
+
+	sort(rb);
+
 }
 
 void sort(RingBuffer * rb)
 {
-	
+
+//Selection Sort 
+
+	Element * temp = (Element *) malloc(sizeof(Element));
+	int i = rb->start;
+	int j = rb->start+1;
+	int indexstore;
+
+	while(i % rb->max_size != rb->end % rb->max_size)
+	{
+		*temp = rb->elems[i];
+		indexstore = i;
+		while(j % rb->max_size != rb->end % rb->max_size)
+		{
+			if(rb->elems[j].priority > temp->priority)
+			{
+				*temp = rb->elems[j];
+				indexstore = j;
+			}
+			j = (j+1) % rb->max_size;
+		}
+		rb->elems[indexstore] = rb->elems[i];
+		rb->elems[i] = *temp;
+		
+		i = (i + 1) % rb->max_size;
+		j = (i + 1) % rb->max_size;
+
+	}
 }
 
 int size(RingBuffer * rb)
 {
-	
 	int count = 0;
 	int i = 0;
 	while((rb->start+i) %rb->max_size != rb->end)
@@ -300,7 +313,7 @@ linkedlists * load(char filename[])
 
 int main()
 {   
-	RingBuffer * ring1 = create_q(7);
+	RingBuffer * ring1 = create_q(3);
 
 
 
@@ -310,7 +323,7 @@ int main()
 	enqueue(ring1, 16, 11);
 	enqueue(ring1, 12, 21);
 	enqueue(ring1, 62, 31);
-	enqueue(ring1, 24, 61);
+/*	enqueue(ring1, 24, 61);
 	enqueue(ring1, 77, 65);
 	enqueue(ring1, 24, 616);
 	enqueue(ring1, 36, 67);
@@ -318,7 +331,8 @@ int main()
 	enqueue(ring1, 27, 41);
 	enqueue(ring1, 64, 61);
 	enqueue(ring1, 54, 21);
-	printf("Size of this shit: %d", size(ring1));
+*/
+	printf("Size of this queue: %d", size(ring1));
 
 	
 	
