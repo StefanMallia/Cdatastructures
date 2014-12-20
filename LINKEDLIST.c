@@ -1,5 +1,9 @@
-//#ifndef _PQUEUE_H_
-//#define _PQUEUE_H_
+#ifndef _LINKEDLIST_PRIORITYQUEUE_h
+#define _LINKEDLIST_PRIORITYQUEUE_h
+
+
+
+
 #include <stdbool.h>
 #include <string.h> /*has the strcpy prototype*/
 #include <stdlib.h> /* has the malloc prototype */
@@ -292,7 +296,7 @@ linkedlists * load(char filename[])
 		
 
 
-
+/*
 
 int main()
 {   
@@ -362,3 +366,5 @@ printf("\n\nSize: %d\n", size(linkedlist1));
   
 	return 0;
 }
+
+*/
