@@ -155,8 +155,8 @@ void clearR(RingBuffer * rb)
 
 void storeR(RingBuffer * rb, char * filename)
 {
-	//char filetype[] = ".bin";	
-	//strncat(filelol,filetype,4);
+	char filetype[] = ".bin";	
+	strncat(filename,filetype,4);
 
 	FILE * pFile = fopen(filename, "wb");
 	
@@ -177,6 +177,10 @@ void storeR(RingBuffer * rb, char * filename)
 
 RingBuffer * loadR(char filename[])
 {
+
+	char filetype[] = ".bin";	
+	strncat(filename,filetype,4);
+
 	FILE * pFile = fopen(filename, "rb");
 	RingBuffer * rb;
 		
