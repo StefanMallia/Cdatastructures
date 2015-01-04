@@ -1,27 +1,9 @@
-#ifndef _LINKEDLIST_PRIORITYQUEUE_h
-#define _LINKEDLIST_PRIORITYQUEUE_h
-
-
-
-
 #include <stdbool.h>
 #include <string.h> /*has the strcpy prototype*/
 #include <stdlib.h> /* has the malloc prototype */
 #include <stdio.h>
+#include "LINKEDLIST.h"
 
-typedef struct pqnode
-{
-	int element;
-	int priority;
-	struct pqnode * next;   
-}pqnode;
-
-
-typedef struct linkedlists
-{
-	int max_size;
-	struct pqnode * headnode;
-}linkedlists;
 
 
 linkedlists * create_q(int max_size)
@@ -203,8 +185,8 @@ void clear(linkedlists * linkedlist)
 
 void store(linkedlists * linkedlist, char * filename)
 {
-	//char filetype[] = ".bin";	
-	//strncat(filelol,filetype,4);
+	char filetype[] = ".bin";	
+	strncat(filename,filetype,4);
 
 	FILE * pFile = fopen(filename, "wb");
 	
@@ -250,6 +232,10 @@ void store(linkedlists * linkedlist, char * filename)
 
 linkedlists * load(char filename[])
 {
+
+	char filetype[] = ".bin";	
+	strncat(filename,filetype,4);
+
 	FILE * pFile = fopen(filename, "rb");
 	linkedlists * linkedlist;
 		

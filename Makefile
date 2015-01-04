@@ -1,6 +1,8 @@
 CFLAGS=-Wall -g
 
-all: ex1 ex3 #builds all with just command make
+all: Tester #builds all with just command make
+
+Tester: LINKEDLIST
 
 clean:
 	rm -f ex1 ex2
