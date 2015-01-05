@@ -35,6 +35,6 @@ void clear(linkedlists * linkedlist);
 
 void store(linkedlists * linkedlist, char * filename);
 
-linkedlists * load(char filename[]);
+linkedlists * load(char * filename);
 
 #endif

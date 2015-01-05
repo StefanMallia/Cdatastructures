@@ -185,10 +185,13 @@ void clear(linkedlists * linkedlist)
 
 void store(linkedlists * linkedlist, char * filename)
 {
-	char filetype[] = ".bin";	
-	strncat(filename,filetype,4);
+	char filetype[4] = ".bin";
+	char filename2[strlen(filename)+4];
+	strncpy(filename2, filename, strlen(filename));	
+	strncat(filename2,filetype,4);
+	printf("%s", filename2);
 
-	FILE * pFile = fopen(filename, "wb");
+	FILE * pFile = fopen(filename2, "wb");
 	
 	
 	if (pFile != NULL)
@@ -222,21 +225,25 @@ void store(linkedlists * linkedlist, char * filename)
 			
 			Current = Current->next;
 		}
+		printf("\nWrite Successful\n");
 		fclose(pFile);
 	}
 	else
-		printf("Error Writing/n");		
+		printf("\nError Writing\n");		
 }
 
 
 
-linkedlists * load(char filename[])
+linkedlists * load(char * filename)
 {
 
-	char filetype[] = ".bin";	
-	strncat(filename,filetype,4);
-
-	FILE * pFile = fopen(filename, "rb");
+	/*char filetype[4] = ".bin";
+	char filename2[strlen(filename)+4];
+	strncpy(filename2, filename, strlen(filename));	
+	strncat(filename2,filetype,4);
+	printf("%s", filename2);
+*/
+	FILE * pFile = fopen("name1.bin", "rb");
 	linkedlists * linkedlist;
 		
 
@@ -272,10 +279,14 @@ linkedlists * load(char filename[])
 				current->next = NULL;		
 			}
 		}
+		printf("\nRead successful\n");
 		fclose(pFile);
 	}
 	else
-		printf("Error with read");
+	{
+		printf("\nError with read\n");
+		return NULL;
+	}
 
 	return linkedlist;
 }
