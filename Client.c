@@ -244,11 +244,9 @@ int main()
 				{
 					printf("\nName of Linked List:\n");
 					queuename = getstring();
-					char queuename2[5] = "name1";
-					//strncpy(queuename2, queuename, 20);
 					
-					appendllqueue(load(queuename2), queuename2, llheadnode);
-
+					appendllqueue(load(queuename), queuename, llheadnode);
+					fflush(stdin);
 					printf("-----%s-----", queuename);
 
 					goto BEGINNING;
@@ -321,7 +319,7 @@ int main()
 					if(accessRBqueue(queuename, rbheadnode) == NULL)
 						printf("\nThis queue does not exist\n");
 					else					
-					enqueueR(accessRBqueue(queuename, rbheadnode)->RB, element, priority);
+						enqueueR(accessRBqueue(queuename, rbheadnode)->RB, element, priority);
 
 					goto BEGINNING;
 				}
@@ -331,8 +329,10 @@ int main()
 					printf("\nName of Ring Buffer:\n");
 
 					queuename = getstring();
-
-					dequeueR(accessRBqueue(queuename, rbheadnode)->RB);
+					if(accessRBqueue(queuename, rbheadnode) == NULL)
+						printf("\nThis queue does not exist\n");
+					else
+						dequeueR(accessRBqueue(queuename, rbheadnode)->RB);
 
 					goto BEGINNING;
 				}
@@ -342,8 +342,10 @@ int main()
 					printf("\nName of Ring Buffer:\n");
 
 					queuename = getstring();
-
-					printf("\nHighest priority element is: %d\nwith a priority of: %d", peekR(accessRBqueue(queuename, rbheadnode)->RB).elem, peekR(accessRBqueue(queuename, rbheadnode)->RB).priority);
+					if(accessRBqueue(queuename, rbheadnode) == NULL)
+						printf("\nThis queue does not exist\n");
+					else
+						printf("\nHighest priority element is: %d\nwith a priority of: %d", peekR(accessRBqueue(queuename, rbheadnode)->RB).elem, peekR(accessRBqueue(queuename, rbheadnode)->RB).priority);
 
 					goto BEGINNING;
 				}
@@ -353,11 +355,15 @@ int main()
 					printf("\nName of Ring Buffer:\n");
 
 					queuename = getstring();
-
-					if(is_emptyR(accessRBqueue(queuename, rbheadnode)->RB))
-						printf("Queue is empty\n");
+					if(accessRBqueue(queuename, rbheadnode) == NULL)
+						printf("\nThis queue does not exist\n");
 					else
-						printf("Queue is not empty\n");
+					{
+						if(is_emptyR(accessRBqueue(queuename, rbheadnode)->RB))
+							printf("Queue is empty\n");
+						else
+							printf("Queue is not empty\n");
+					}
 				
 					goto BEGINNING;
 				}
@@ -366,13 +372,16 @@ int main()
 					printf("\nName of Ring Buffer:\n");
 
 					queuename = getstring();
-
-					printf("Size of queue is %d\n",sizeR(accessRBqueue(queuename, rbheadnode)->RB));
+					if(accessRBqueue(queuename, rbheadnode) == NULL)
+						printf("\nThis queue does not exist\n");
+					else
+						printf("Size of queue is %d\n",sizeR(accessRBqueue(queuename, rbheadnode)->RB));
 
 					goto BEGINNING;
 				}
 				case 'g':
 				{
+
 					printf("\nName of Ring Buffer 1:\n");
 					char * queuename1;
 					queuename1 = getstring();
@@ -381,15 +390,18 @@ int main()
 					printf("\nName of Ring Buffer 2:\n");
 					char * queuename2;
 					queuename2 = getstring();
-
-					printf("\nName of new Ring Buffer (note that this does not delete previous queues):\n");
-					char * queuename3;
-					queuename3 = getstring();
-
+					if(accessRBqueue(queuename1, rbheadnode) == NULL || accessRBqueue(queuename2, rbheadnode) == NULL)
+						printf("\nSelection does not exist\n");
+					else
+					{
+						printf("\nName of new Ring Buffer (note that this does not delete previous queues):\n");
+						char * queuename3;
+						queuename3 = getstring();
+					
 
 					
 					appendRBqueue(mergeR(accessRBqueue(queuename1, rbheadnode)->RB, accessRBqueue(queuename2, rbheadnode)->RB), queuename3, rbheadnode);
-
+					}
 
 					goto BEGINNING;
 				}
@@ -398,10 +410,13 @@ int main()
 					printf("\nName of Ring Buffer:\n");
 
 					queuename = getstring();
-
-					clearR(accessRBqueue(queuename, rbheadnode)->RB);
-					clearrbqueue(queuename, rbheadnode);
-				
+					if(accessRBqueue(queuename, rbheadnode) == NULL)
+						printf("\nThis queue does not exist\n");
+					else
+					{
+						clearR(accessRBqueue(queuename, rbheadnode)->RB);
+						clearrbqueue(queuename, rbheadnode);
+					}
 
 					goto BEGINNING;
 				}
@@ -411,7 +426,10 @@ int main()
 
 					queuename = getstring();
 
-					storeR(accessRBqueue(queuename, rbheadnode)->RB, queuename);
+					if(accessRBqueue(queuename, rbheadnode) == NULL)
+						printf("\nThis queue does not exist\n");
+					else
+						storeR(accessRBqueue(queuename, rbheadnode)->RB, queuename);
 				
 
 					goto BEGINNING;
@@ -425,7 +443,7 @@ int main()
 
 					appendRBqueue(loadR(queuename), queuename, rbheadnode);
 
-				
+					fflush(stdin);
 
 					goto BEGINNING;
 
@@ -475,7 +493,7 @@ void appendllqueue(linkedlists * linkedlist, char * queuename, LLarray * llheadn
 	{
 		if(llheadnode->next == NULL)
 		{		
-			strncpy(llheadnode->name, "name1\0", strlen(queuename));
+			strncpy(llheadnode->name, queuename, strlen(queuename));
 			llheadnode->ll = linkedlist;
 			printf("\nYour chosen name is: %s", llheadnode->name);
 			llheadnode->next = (LLarray*) malloc(sizeof(LLarray));

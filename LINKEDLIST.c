@@ -237,13 +237,13 @@ void store(linkedlists * linkedlist, char * filename)
 linkedlists * load(char * filename)
 {
 
-	/*char filetype[4] = ".bin";
+	char filetype[4] = ".bin";
 	char filename2[strlen(filename)+4];
 	strncpy(filename2, filename, strlen(filename));	
 	strncat(filename2,filetype,4);
 	printf("%s", filename2);
-*/
-	FILE * pFile = fopen("name1.bin", "rb");
+
+	FILE * pFile = fopen(filename2, "rb");
 	linkedlists * linkedlist;
 		
 
