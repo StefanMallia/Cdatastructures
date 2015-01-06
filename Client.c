@@ -526,9 +526,9 @@ void printqueuesrb(RBarray * rbheadnode)
 
 char * getstring() 
 {	
-	char * string;	
+	char * string = malloc(sizeof(char)*20);	
 
-	scanf("%s%*c", string2);
+	scanf("%s%*c", string);
 
 
 	return string;
