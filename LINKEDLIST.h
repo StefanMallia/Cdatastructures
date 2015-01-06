@@ -2,6 +2,7 @@
 #define _LINKEDLIST_PRIORITYQUEUE_h
 #include <stdbool.h>
 
+//single node for the linked list priority queue
 typedef struct pqnode
 {
 	int element;
@@ -9,7 +10,7 @@ typedef struct pqnode
 	struct pqnode * next;
 }pqnode;
 
-
+//struct that contains all nodes
 typedef struct linkedlists
 {
 	int max_size;

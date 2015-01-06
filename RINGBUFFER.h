@@ -5,14 +5,14 @@
 
 
 
-typedef struct
+typedef struct//element struct
 {
 	int elem;
 	int priority;
 }
 Element;
 
-typedef struct
+typedef struct//struct that contains elements
 {
 	int max_size;
 	int start;

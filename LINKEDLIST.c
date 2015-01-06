@@ -7,10 +7,10 @@
 
 
 linkedlists * create_q(int max_size)
-{
+{	//first malloc the Linkedlist (linkedlists contains all nodes and one int for max, but for now it is empty except for max int)
 	linkedlists * linkedlist = (linkedlists *)malloc(sizeof(linkedlists));
 	linkedlist->max_size = max_size;
-	linkedlist->headnode = NULL;
+	linkedlist->headnode = NULL;//headnode set to NULL until next 
 
 	return linkedlist;
 }
@@ -20,20 +20,20 @@ void enqueue(linkedlists * linkedlist, int x, int p)
 {
 	
 
-	if(linkedlist->headnode == NULL)
-	{
+	if(linkedlist->headnode == NULL)//if linkedlist contains no nodes
+	{	//malloc and assign first node
 		linkedlist->headnode = (pqnode *) malloc(sizeof(pqnode));
 		
 		linkedlist->headnode->element = x;
 		linkedlist->headnode->priority = p;
 		linkedlist->headnode->next = NULL;
 	}
-	else		
+	else
 	{
-		pqnode * current = linkedlist->headnode;
+		pqnode * current = linkedlist->headnode;//starting from first node to iterate
 
 		int max_size = linkedlist->max_size;
-		int i = 2;
+		int i = 2;//counter
 
 		while(current->next != NULL)
 		{
@@ -43,7 +43,7 @@ void enqueue(linkedlists * linkedlist, int x, int p)
 			
 			
 		if(i <= max_size)
-		{
+		{//for example if max size is 2 and only one node exists then the while loop above does not execute and i is left at 2
 			current->next = (pqnode *) malloc(sizeof(pqnode));			
 			current = current->next;			
 			
@@ -60,33 +60,31 @@ void enqueue(linkedlists * linkedlist, int x, int p)
 void dequeue(linkedlists * linkedlist)
 {
 /*FIFO*/
-
-	pqnode * current;
-	pqnode * prev;
+	pqnode * current = NULL;
+	pqnode * prev = NULL;//prev required to connect previous to next
 	
 	current = linkedlist->headnode;
 	int temppriority = 0;   
 
 	while(current != NULL)
-	{
+	{//iterate and record highest priority
 		if(current->priority > temppriority)
 			temppriority = current->priority;
-					
-	
-		current = current->next;
 
+		current = current->next;
 	}
    
 	current = linkedlist->headnode;
 	
 	while(current->priority != temppriority && current != NULL)
-	{
+	{//iterate until largest priority is found
 		prev = current;
 		current=current->next;
 	}   
 
-	if(temppriority == current->priority)
+	if(temppriority == current->priority && current != NULL)
 	{
+	
 		prev->next = current->next;
 		free(current);
 	}
@@ -95,16 +93,13 @@ void dequeue(linkedlists * linkedlist)
 
 pqnode * peek(linkedlists * linkedlist)
 {
-
-/* mostly copied from dequeue */
-
 	pqnode * current;
 
 	current = linkedlist->headnode;
 	int temppriority = 0;   
    
 	while(current != NULL)
-	{
+	{//iterate and record highest priority
 		if(current->priority > temppriority)
 			temppriority = current->priority;
        
@@ -114,6 +109,7 @@ pqnode * peek(linkedlists * linkedlist)
 	current = linkedlist->headnode;
 
 	while(temppriority != current->priority && current != NULL)
+	//iterate until highest priority is found
 		current=current->next;
 		
 
@@ -145,7 +141,7 @@ int size(linkedlists * linkedlist)
 	int count = 0;
 
 	while(current != NULL)
-	{
+	{//iterate and count
 		count++;
 		current=current->next;
 	}
@@ -154,7 +150,7 @@ int size(linkedlists * linkedlist)
 
 
 linkedlists * merge(linkedlists *linkedlistQ, linkedlists* linkedlistR)
-{
+{	//new queue has combined max size. 
 	linkedlistQ->max_size = linkedlistQ->max_size + linkedlistR->max_size;
 
 	pqnode * current = linkedlistQ->headnode;
@@ -175,7 +171,7 @@ void clear(linkedlists * linkedlist)
 	pqnode * prev;
 
 	while(current != NULL)
-	{
+	{//iterate and clear
 		prev = current;
 		current = current->next;
 		free(prev);
@@ -184,7 +180,7 @@ void clear(linkedlists * linkedlist)
 
 
 void store(linkedlists * linkedlist, char * filename)
-{
+{	//append ll.bin to distinguish from ringbuffer and to save as binary filie
 	char filetype[6] = "ll.bin";
 	char filename2[20] = "\0";
 	strncpy(filename2, filename, strlen(filename));	
@@ -195,7 +191,7 @@ void store(linkedlists * linkedlist, char * filename)
 	
 	
 	if (pFile != NULL)
-	{
+	{	//first fwrite the linkedlist struct, then the maxsize, then each individual node
 		pqnode * Current = linkedlist->headnode;
 		pqnode * holdnext = NULL;
 		
@@ -235,7 +231,7 @@ void store(linkedlists * linkedlist, char * filename)
 
 
 linkedlists * load(char * filename)
-{
+{	//same process as store but using also using malloc
 
 	char filetype[6] = "ll.bin";
 	char filename2[20] = "\0";

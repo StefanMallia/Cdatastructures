@@ -4,7 +4,7 @@
 #include "LINKEDLIST.h"
 #include "RINGBUFFER.h"
 
-
+//A node for a linked list of linked list priority queues
 typedef struct LLarray
 {
 	linkedlists * ll;
@@ -12,49 +12,55 @@ typedef struct LLarray
 	struct LLarray * next;	
 }LLarray;
 
+//A node for a linked list of ringbuffer priority queues
 typedef struct RBarray
 {
-	RingBuffer * RB;
+	RingBuffer * rb;
 	char * name;
 	struct RBarray * next;
 }RBarray;
 
+//ll linkedlist
+//rb ringbuffer
 
-void printqueuesll(LLarray * llheadnode);
-void printqueuesrb(RBarray * rbheadnode);
-char * getstring();
-void appendllqueue(linkedlists * linkedlist, char * queuename, LLarray * llheadnode);
-LLarray * accessllqueue(char * queuename, LLarray * llheadnode);
-LLarray * clearllqueue(char * queuename, LLarray * llheadnode);
-void appendrbqueue(RingBuffer * RBqueue, char * queuename, RBarray * rbheadnode);
-RBarray * accessrbqueue(char * queuename, RBarray * rbheadnode);
-RBarray * clearrbqueue(char * queuename, RBarray * rbheadnode);
+void printqueuesll(LLarray * llheadnode); //will print existing ll queues to console
+void printqueuesrb(RBarray * rbheadnode); //will print existing rb queues to console
+char * getstring(); //a function for user string input
+void appendllqueue(linkedlists * linkedlist, char * queuename, LLarray * llheadnode);//adding an element to the ll for ll priority queues
+LLarray * accessllqueue(char * queuename, LLarray * llheadnode);//accessing a particular node of the ll for the ll priority queues
+LLarray * clearllqueue(char * queuename, LLarray * llheadnode);//clearing a particular node after having cleared its contained ll
+void appendrbqueue(RingBuffer * RBqueue, char * queuename, RBarray * rbheadnode);//adding an element to the ll for rb priority queues
+RBarray * accessrbqueue(char * queuename, RBarray * rbheadnode);//accessing a particular node of the ll for the rb priority queues
+RBarray * clearrbqueue(char * queuename, RBarray * rbheadnode);//clearing a particular node after having cleared its contained rb
 
 
 
 int main()
 {
+	//malloc on the first node of the ll containing the ll priority queues
+	//everything is set to NULL to be set on the first create_q() function call
 	LLarray * llheadnode = (LLarray *) malloc(sizeof(LLarray));
 	llheadnode->ll = NULL;
 	llheadnode->name = NULL;
 	llheadnode->next = NULL;
 
-
+	//malloc on the first node of the ll containing the rb priority queues
+	//everything is set to NULL to be set on the first create_q() function call
 	RBarray * rbheadnode = (RBarray *) malloc(sizeof(RBarray));
-	rbheadnode->RB = NULL;
+	rbheadnode->rb = NULL;
 	rbheadnode->name = NULL;
 	rbheadnode->next = NULL;
 
-	char ch;
+	char ch;//to be used to switch statements
 	
 	printf("\nWelcome to the queueing application");
 
-	BEGINNING:
+	BEGINNING://used heavily to return to "main" menu
 	printf("\n\na. Linked List\nb. Ring Buffer\n\n");
-	printf("Please make a selection (1 or 2 or enter 'q' to cancel):\n\n");
+	printf("Please make a selection (a or b or enter 'q' to quit):\n\n");
 	
 	
-	scanf("%c%*c", &ch);
+	scanf("%c%*c", &ch);//%*c is used to exclude newline
 	{
 
 		if('q' == ch)
@@ -63,10 +69,10 @@ int main()
 		switch(ch)
 		{
 			case 'a':
-				goto CASE1;
+				goto CASE1;//ll menu
 
 			case 'b':
-				goto CASE2;
+				goto CASE2;//rb menu
 		
 			default:
 				printf("\nThat is not a valid choice\n");
@@ -76,39 +82,31 @@ int main()
 
 	CASE1:
 	{
-		
-
-	char * queuename;
-
-	char ch2 = NULL;
-
+		char * queuename;
+		char ch2 = NULL;
 
 		printf("\n\nActions:\n\n");
 		printf("a. Create a Linked List Queue\nb. Make an entry into a queue\nc. Dequeue highest priority element\nd. Highest priority element\ne. Check whether queue is empty\nf. Size of queue\ng. Merge two queue's\nh. Clear queue of contents\ni. List existing queues\nj. Store existing queue to file\nk. Load queue from file\n");
-		printf("Please make a selection (enter 'q' to cancel):\n\n");
+		printf("Please make a selection (enter 'q' to return to main menu):\n\n");
 
 		scanf("%c%*c", &ch2);
 		{
 			
 			if('q' == ch2)
-				return 0;
+				goto BEGINNING;
 
 			switch(ch2)
 			{
 				case 'a':
-				{
+				{//create a new ll
 					printf("\nName of Linked List:\n");
 					queuename = getstring();
-
 
 					printf("\nMaximum size of Linked List:\n");
 					int max_size;
 					scanf("%d%*c", &max_size);
 
-
-
 					appendllqueue(create_q(max_size), queuename, llheadnode);
-
 
 					goto BEGINNING;
 				}
@@ -118,7 +116,6 @@ int main()
 					printf("\nEnter the queue name:\n");
 					queuename = getstring();
 
-
 					printf("\nEnter an integer element:\n");
 					int element;
 					scanf("%d%*c", &element);
@@ -126,7 +123,8 @@ int main()
 					printf("\nEnter an integer priority:\n");
 					int priority;
 					scanf("%d%*c", &priority);
-					if(accessllqueue(queuename, llheadnode) == NULL)
+
+					if(accessllqueue(queuename, llheadnode) == NULL)//accessllqueue returns a NULL if it does not find specified name
 						printf("\nThis queue does not exist\n");
 					else
 						enqueue(accessllqueue(queuename, llheadnode)->ll, element, priority);
@@ -137,7 +135,6 @@ int main()
 				case 'c':
 				{
 					printf("\nName of Linked List:\n");
-
 					queuename = getstring();
 
 					if(accessllqueue(queuename, llheadnode) == NULL)
@@ -151,7 +148,6 @@ int main()
 				case 'd':
 				{
 					printf("\nName of Linked List:\n");
-
 					queuename = getstring();
 
 					if(accessllqueue(queuename, llheadnode) == NULL)
@@ -165,8 +161,8 @@ int main()
 				case 'e':
 				{
 					printf("\nName of Linked List:\n");
-
 					queuename = getstring();
+
 					if(accessllqueue(queuename, llheadnode) == NULL)
 						printf("\nThis queue does not exist\n");
 					else
@@ -176,12 +172,13 @@ int main()
 						else
 							printf("Queue is not empty\n");
 					}
+
 					goto BEGINNING;
 				}
+
 				case 'f':
 				{
 					printf("\nName of Linked List:\n");
-
 					queuename = getstring();
 
 					if(accessllqueue(queuename, llheadnode) == NULL)
@@ -191,6 +188,7 @@ int main()
 
 					goto BEGINNING;
 				}
+
 				case 'g':
 				{
 					printf("\nName of Linked List 1:\n");
@@ -205,7 +203,7 @@ int main()
 					if((accessllqueue(queuename1, llheadnode) == NULL) || (accessllqueue(queuename2, llheadnode) == NULL))
 						printf("\nSelection does not exist\n");
 					else
-					{
+					{//also deletes the two input queues (queuename1 and queuename2)
 						printf("\nName of new Linked List:\n");
 						char queuename3[20];
 						strncpy(queuename3, getstring(),20);
@@ -218,43 +216,47 @@ int main()
 						llheadnode = clearllqueue(queuename2, llheadnode);
 
 					}
+
 					goto BEGINNING;
 				}
+
 				case 'h':
 				{
 					printf("\nName of Linked List:\n");
-
 					queuename = getstring();
+
 					if(accessllqueue(queuename, llheadnode) == NULL)
 						printf("\nThis queue does not exist\n");
 					else
 					{
 						clear(accessllqueue(queuename, llheadnode)->ll);
 						llheadnode = clearllqueue(queuename, llheadnode);
+						//this function returns headnode in  case it was deleted and changed
 					}
 
 					goto BEGINNING;
 				}
+
 				case 'i':
 				{
 					printqueuesll(llheadnode);
+
 					goto BEGINNING;
 				}
 
 				case 'j':
 				{
 					printf("\nName of Linked List:\n");
-
 					queuename = getstring();
+
 					if(accessllqueue(queuename, llheadnode) == NULL)
 						printf("\nThis queue does not exist\n");
 					else
 						store(accessllqueue(queuename, llheadnode)->ll, queuename);
 
 					goto BEGINNING;
-
-
 				}
+
 				case 'k':
 				{
 					printf("\nName of Linked List:\n");
@@ -262,41 +264,32 @@ int main()
 					
 					appendllqueue(load(queuename), queuename, llheadnode);
 
-
 					goto BEGINNING;
-
 				}
+
 				default:
+				{
 					printf("\nThat is not a valid choice\n");
 
 					goto BEGINNING;
-			}
-
-
-
-		
+				}
+			}		
 		}
-	return 0;
 	}
 
 	CASE2:
 	{
-		
-
-	char * queuename;
-
-	char ch2 = NULL;
-
+		char * queuename;
+		char ch2 = NULL;
 
 		printf("\n\nActions:\n\n");
 		printf("a. Create a RingBuffer Queue\nb. Make an entry into a queue\nc. Dequeue highest priority element\nd. Highest priority element\ne. Check whether queue is empty\nf. Size of queue\ng. Merge two queue's\nh. Clear queue of contents\ni. List existing queues\nj. Store existing queue to file\nk. Load queue from file\n");
-		printf("Please make a selection (enter 'q' to cancel):\n\n");
+		printf("Please make a selection (enter 'q' to return to main menu):\n\n");
 
 		scanf("%c%*c", &ch2);
-		{
-			
+		{			
 			if('q' == ch2)
-				return 0;
+				goto BEGINNING;
 
 			switch(ch2)
 			{
@@ -309,11 +302,7 @@ int main()
 					int max_size;
 					scanf("%d%*c", &max_size);
 
-
-
-
 					appendrbqueue(create_qR(max_size), queuename, rbheadnode);
-
 
 					goto BEGINNING;
 				}
@@ -323,7 +312,6 @@ int main()
 					printf("\nEnter the queue name:\n");
 					queuename = getstring();
 
-
 					printf("\nEnter an integer element:\n");
 					int element;
 					scanf("%d%*c", &element);
@@ -331,10 +319,11 @@ int main()
 					printf("\nEnter an integer priority:\n");
 					int priority;
 					scanf("%d%*c", &priority);
+
 					if(accessrbqueue(queuename, rbheadnode) == NULL)
 						printf("\nThis queue does not exist\n");
 					else					
-						enqueueR(accessrbqueue(queuename, rbheadnode)->RB, element, priority);
+						enqueueR(accessrbqueue(queuename, rbheadnode)->rb, element, priority);
 
 					goto BEGINNING;
 				}
@@ -342,12 +331,12 @@ int main()
 				case 'c':
 				{
 					printf("\nName of Ring Buffer:\n");
-
 					queuename = getstring();
+
 					if(accessrbqueue(queuename, rbheadnode) == NULL)
 						printf("\nThis queue does not exist\n");
 					else
-						dequeueR(accessrbqueue(queuename, rbheadnode)->RB);
+						dequeueR(accessrbqueue(queuename, rbheadnode)->rb);
 
 					goto BEGINNING;
 				}
@@ -360,7 +349,7 @@ int main()
 					if(accessrbqueue(queuename, rbheadnode) == NULL)
 						printf("\nThis queue does not exist\n");
 					else
-						printf("\nHighest priority element is: %d\nwith a priority of: %d", peekR(accessrbqueue(queuename, rbheadnode)->RB).elem, peekR(accessrbqueue(queuename, rbheadnode)->RB).priority);
+						printf("\nHighest priority element is: %d\nwith a priority of: %d", peekR(accessrbqueue(queuename, rbheadnode)->rb).elem, peekR(accessrbqueue(queuename, rbheadnode)->rb).priority);
 
 					goto BEGINNING;
 				}
@@ -368,25 +357,17 @@ int main()
 				case 'e':
 				{
 					printf("\nName of Ring Buffer:\n");
-
 					queuename = getstring();
+
 					if(accessrbqueue(queuename, rbheadnode) == NULL)
 						printf("\nThis queue does not exist\n");
 					else
 					{
-						if(is_emptyR(accessrbqueue(queuename, rbheadnode)->RB))
+						if(is_emptyR(accessrbqueue(queuename, rbheadnode)->rb))
 							printf("Queue is empty\n");
 						else
 							printf("Queue is not empty\n");
-					}			printf("\nName of Ring Buffer:\n");
-
-					queuename = getstring();
-
-					if(accessrbqueue(queuename, rbheadnode) == NULL)
-						printf("\nThis queue does not exist\n");
-					else
-						storeR(accessrbqueue(queuename, rbheadnode)->RB, queuename);
-				
+					}
 
 					goto BEGINNING;
 				}
@@ -394,15 +375,16 @@ int main()
 				case 'f':
 				{
 					printf("\nName of Ring Buffer:\n");
-
 					queuename = getstring();
+
 					if(accessrbqueue(queuename, rbheadnode) == NULL)
 						printf("\nThis queue does not exist\n");
 					else
-						printf("Size of queue is %d\n",sizeR(accessrbqueue(queuename, rbheadnode)->RB));
+						printf("Size of queue is %d\n",sizeR(accessrbqueue(queuename, rbheadnode)->rb));
 
 					goto BEGINNING;
 				}
+
 				case 'g':
 				{
 					//Takes 3 string inputs, deletes 2 input queues, creates one merged queues
@@ -423,29 +405,28 @@ int main()
 						char queuename3[20];
 						strncpy(queuename3, getstring(), 20);
 					
-
-					
-					appendrbqueue(mergeR(accessrbqueue(queuename1, rbheadnode)->RB, accessrbqueue(queuename2, rbheadnode)->RB), queuename3, rbheadnode);
+						appendrbqueue(mergeR(accessrbqueue(queuename1, rbheadnode)->rb, accessrbqueue(queuename2, rbheadnode)->rb), queuename3, rbheadnode);
 						//clearing input queues
-						clearR(accessrbqueue(queuename1, rbheadnode)->RB);
+						clearR(accessrbqueue(queuename1, rbheadnode)->rb);
 						rbheadnode = clearrbqueue(queuename1, rbheadnode);
 
-						clearR(accessrbqueue(queuename2, rbheadnode)->RB);
+						clearR(accessrbqueue(queuename2, rbheadnode)->rb);
 						rbheadnode = clearrbqueue(queuename2, rbheadnode);
 					}
 
 					goto BEGINNING;
 				}
+
 				case 'h':
 				{
 					printf("\nName of Ring Buffer:\n");
-
 					queuename = getstring();
+
 					if(accessrbqueue(queuename, rbheadnode) == NULL)
 						printf("\nThis queue does not exist\n");
 					else
 					{
-						clearR(accessrbqueue(queuename, rbheadnode)->RB);
+						clearR(accessrbqueue(queuename, rbheadnode)->rb);
 						rbheadnode = clearrbqueue(queuename, rbheadnode);
 					}
 
@@ -457,50 +438,47 @@ int main()
 					printqueuesrb(rbheadnode);
 					goto BEGINNING;
 				}
+
 				case 'j':
 				{
 					printf("\nName of Ring Buffer:\n");
-
 					queuename = getstring();
 
 					if(accessrbqueue(queuename, rbheadnode) == NULL)
 						printf("\nThis queue does not exist\n");
 					else
-						storeR(accessrbqueue(queuename, rbheadnode)->RB, queuename);
+						storeR(accessrbqueue(queuename, rbheadnode)->rb, queuename);
 				
-
 					goto BEGINNING;
 				}
+
 				case 'k':
 				{
 					printf("\nName of Ring Buffer:\n");
-
 					queuename = getstring();
 
-
 					appendrbqueue(loadR(queuename), queuename, rbheadnode);
-
 
 					goto BEGINNING;
 
 				}
+
 				default:
+				{
 					printf("\nThat is not a valid choice\n");
+
 					goto BEGINNING;
+				}
 			}
-
 		}
-	return 0;
 	}
-
-
-
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void printqueuesll(LLarray * llheadnode)
-{
+{	//will print existing ll queues to console
 	LLarray * current = llheadnode;// Queue array struct
 	int i = 1; //Queue number
 
@@ -512,24 +490,23 @@ void printqueuesll(LLarray * llheadnode)
 	}
 }
 void printqueuesrb(RBarray * rbheadnode)
-{
+{	//will print existing rb queues to console
 	RBarray * current = rbheadnode;// Queue array struct
 	int i = 1; //Queue number
 
 	while(current->name != NULL) //Iterate through queue struct array to print  one by one
 	{
-		printf("Queue:%d %s with %d elements \n", i, current->name, sizeR(current->RB));
+		printf("Queue:%d %s with %d elements \n", i, current->name, sizeR(current->rb));
 		current = current->next;
 		i++;
 	}
 }
 
 char * getstring() 
-{	
-	char * string = malloc(sizeof(char)*20);	
+{	//a function for user string input
+	char * string = malloc(sizeof(char)*20);
 
 	scanf("%s%*c", string);
-
 
 	return string;
 }
@@ -537,10 +514,9 @@ char * getstring()
 ////////////////////////////////////////////////////////////////////////////////
 
 void appendllqueue(linkedlists * linkedlist, char * queuename, LLarray * llheadnode)
-{
-	if(accessllqueue(queuename, llheadnode) == NULL )
+{	//adding an element to the ll for ll priority queues
+	if(accessllqueue(queuename, llheadnode) == NULL)//if name not found in list of queues
 	{
-
 		LLarray * current  = llheadnode;
 		
 		while(current->next != NULL)
@@ -548,13 +524,15 @@ void appendllqueue(linkedlists * linkedlist, char * queuename, LLarray * llheadn
 
 		current->name = (char *)calloc(strlen(queuename)+1, sizeof(char));
 		strncpy(current->name, queuename, strlen(queuename));
+
 		current->ll = linkedlist;
-		printf("\nYour chosen name is: %s", current->name);
+
+		printf("\nYour queue name is: %s", current->name);
+
 		current->next = (LLarray*) malloc(sizeof(LLarray));
 		current->next->ll = NULL;
 		current->next->name = NULL;			
 		current->next->next = NULL;
-
 
 	}
 	else
@@ -565,33 +543,36 @@ void appendllqueue(linkedlists * linkedlist, char * queuename, LLarray * llheadn
 
 
 LLarray * accessllqueue(char * queuename, LLarray * llheadnode)
-{
+{	//accessing a particular node of the ll for the ll priority queues
+	LLarray * current = llheadnode;//starting from first node
 
-	LLarray * current = llheadnode;
 	while(current->next != NULL && strcmp(current->name, queuename) != 0)
+	//if next node is unallocated and current node's name does not match user input
 		current = current->next;
+
 	if(current->name == NULL && current->next == NULL)
+	//if this is true then whole list was iterated through with no results
 		return NULL;
 	else
+	//this is true if result is found, current node is returned (list of linked lists)
 		return current;
 }
 
 LLarray * clearllqueue(char * queuename, LLarray * llheadnode)
-{
-	LLarray * previous;
+{	//clearing a particular node after having cleared its contained ll
+	LLarray * previous;//used to fix previous node's pointer
 	LLarray * current = llheadnode;
 
-
-	while(strcmp(current->name, queuename) != 0)
+	while(strcmp(current->name, queuename) != 0)//iterates until match
 	{
 		previous = current;
 		current = current->next;
 	}
 
-	if(current == llheadnode)
+	if(current == llheadnode)//if current happens to be headnode
 	{
 		llheadnode = current->next;
-		if(llheadnode->next == NULL)
+		if(llheadnode->next == NULL)//if headnode is not followed by additional nodes, allocates new memory
 		{
 			llheadnode->next = (LLarray *)malloc(sizeof(LLarray));
 			llheadnode->next->name = NULL;
@@ -600,10 +581,10 @@ LLarray * clearllqueue(char * queuename, LLarray * llheadnode)
 		}
 	
 		free(current->name); // ll already freed and next should not be freed
-		free(current); // free struct
+		free(current); // free what was previously headnode
 		printf("\n%s cleared\n", queuename);
 	}
-	else
+	else//if headnode is not node to be cleared
 	{	
 		previous->next = current->next;		
 		free(current->name);
@@ -620,10 +601,9 @@ LLarray * clearllqueue(char * queuename, LLarray * llheadnode)
 	
 
 void appendrbqueue(RingBuffer * RBqueue, char * queuename, RBarray * rbheadnode)
-{
-	if(accessrbqueue(queuename, rbheadnode)->name == NULL || strcmp(accessrbqueue(queuename, rbheadnode)->name, queuename) != 0)
+{	//adding an element to the ll for ll priority queues
+	if(accessrbqueue(queuename, rbheadnode) == NULL)//if name not found in list of queues
 	{
-	
 		RBarray * current  = rbheadnode;
 		
 		while(current->next != NULL)
@@ -631,33 +611,45 @@ void appendrbqueue(RingBuffer * RBqueue, char * queuename, RBarray * rbheadnode)
 
 		current->name = (char *)calloc(strlen(queuename)+1, sizeof(char));
 		strncpy(current->name, queuename, strlen(queuename));
-		current->RB = RBqueue;
-		printf("\nYour chosen name is: %s", current->name);
-		current->next = (RBarray*) malloc(sizeof(RBarray));
-		current->next->RB = NULL;
+
+		current->rb = RBqueue;
+
+		printf("\nYour queue name is: %s", current->name);
+
+		current->next = (RBarray*) malloc(sizeof(LLarray));
+		current->next->rb = NULL;
 		current->next->name = NULL;			
 		current->next->next = NULL;
-	
 
 	}
 	else
 		printf("\nThis name already exists");
+
+
+
 
 		
 }
 
 
 RBarray * accessrbqueue(char * queuename, RBarray * rbheadnode)
-{
-	RBarray * current = rbheadnode;
+{	//accessing a particular node of the ll for the rb priority queues
+	RBarray * current = rbheadnode;//starting from first node
+
 	while(current->next != NULL && strcmp(current->name, queuename) != 0)
+	//if next node is unallocated and current node's name does not match user input
 		current = current->next;
 
-	return current;
+	if(current->name == NULL && current->next == NULL)
+	//if this is true then whole list was iterated through with no results
+		return NULL;
+	else
+	//this is true if result is found, current node is returned (list of linked lists)
+		return current;
 }
 
 RBarray * clearrbqueue(char * queuename, RBarray * rbheadnode)
-{
+{	//clearing a particular node after having cleared its contained rb
 	RBarray * previous;
 	RBarray * current = rbheadnode;
 
@@ -675,7 +667,7 @@ RBarray * clearrbqueue(char * queuename, RBarray * rbheadnode)
 		{
 			rbheadnode->next = (RBarray *)malloc(sizeof(RBarray));
 			rbheadnode->next->name = NULL;
-			rbheadnode->next->RB = NULL;
+			rbheadnode->next->rb = NULL;
 			rbheadnode->next->next = NULL;
 		}
 	
@@ -694,8 +686,3 @@ RBarray * clearrbqueue(char * queuename, RBarray * rbheadnode)
 	}
 	return rbheadnode;
 }
-
-
-
-
-	
