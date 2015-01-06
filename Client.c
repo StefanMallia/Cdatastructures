@@ -4,21 +4,18 @@
 #include "LINKEDLIST.h"
 #include "RINGBUFFER.h"
 
-int Lcounter = 0; //a counter of number of existing queues
-int Rcounter = 0;
-
 
 typedef struct LLarray
 {
 	linkedlists * ll;
-	char name[20];
+	char * name;
 	struct LLarray * next;	
 }LLarray;
 
 typedef struct RBarray
 {
 	RingBuffer * RB;
-	char name[20];
+	char * name;
 	struct RBarray * next;
 }RBarray;
 
@@ -37,10 +34,14 @@ void clearrbqueue(char * queuename, RBarray * rbheadnode);
 int main()
 {
 	LLarray * llheadnode = (LLarray *) malloc(sizeof(LLarray));
+	llheadnode->ll = NULL;
+	llheadnode->name = NULL;
 	llheadnode->next = NULL;
 
 
 	RBarray * rbheadnode = (RBarray *) malloc(sizeof(RBarray));
+	rbheadnode->RB = NULL;
+	rbheadnode->name = NULL;
 	rbheadnode->next = NULL;
 
 	char ch;
@@ -76,7 +77,7 @@ int main()
 	{
 		
 
-	char * queuename = "\0";
+	char * queuename;
 
 	char ch2 = NULL;
 
@@ -114,7 +115,7 @@ int main()
 				case 'b':
 				{
 					printf("\nEnter the queue name:\n");
-					queuename = getstring();
+					scanf("%s%*c", queuename);
 
 
 					printf("\nEnter an integer element:\n");
@@ -246,7 +247,7 @@ int main()
 					queuename = getstring();
 					
 					appendllqueue(load(queuename), queuename, llheadnode);
-					fflush(stdin);
+
 					printf("-----%s-----", queuename);
 
 					goto BEGINNING;
@@ -254,6 +255,7 @@ int main()
 				}
 				default:
 					printf("\nThat is not a valid choice\n");
+
 					goto BEGINNING;
 			}
 
@@ -268,7 +270,7 @@ int main()
 	{
 		
 
-	char * queuename = "\0";
+	char * queuename;
 
 	char ch2 = NULL;
 
@@ -443,7 +445,6 @@ int main()
 
 					appendRBqueue(loadR(queuename), queuename, rbheadnode);
 
-					fflush(stdin);
 
 					goto BEGINNING;
 
@@ -466,7 +467,7 @@ void printqueuesll(LLarray * llheadnode)
 {
 	LLarray * current = llheadnode;
 
-	while(current != NULL)
+	while(current->name != NULL)
 	{
 		printf("%s", current->name);
 		current = current->next;
@@ -475,16 +476,11 @@ void printqueuesll(LLarray * llheadnode)
 
 char * getstring()
 {	
-	//removing fgets newline from string input
 	char * string;
-	char * stringln;
 
-	fgets(string, 20, stdin);
-	stringln = malloc(sizeof(string)-sizeof(char));
-	strncpy(stringln, string, strlen(string)-1);
+	scanf("%s%*c", string);
 
-
-	return stringln;
+	return string;
 }
 
 void appendllqueue(linkedlists * linkedlist, char * queuename, LLarray * llheadnode)
@@ -492,12 +488,16 @@ void appendllqueue(linkedlists * linkedlist, char * queuename, LLarray * llheadn
 	if(accessllqueue(queuename, llheadnode) == NULL)
 	{
 		if(llheadnode->next == NULL)
-		{		
+		{
+			llheadnode->name = (char *)calloc(strlen(queuename)+1, sizeof(char));			
 			strncpy(llheadnode->name, queuename, strlen(queuename));
 			llheadnode->ll = linkedlist;
 			printf("\nYour chosen name is: %s", llheadnode->name);
 			llheadnode->next = (LLarray*) malloc(sizeof(LLarray));
+			llheadnode->next->ll = NULL;
+			llheadnode->next->name = NULL;
 			llheadnode->next->next = NULL;
+
 		}
 		else
 		{
@@ -505,27 +505,34 @@ void appendllqueue(linkedlists * linkedlist, char * queuename, LLarray * llheadn
 			
 			while(current->next != NULL)
 				current = current->next;
-			
+
+			current->name = (char *)calloc(strlen(queuename)+1, sizeof(char));
 			strncpy(current->name, queuename, strlen(queuename));
 			current->ll = linkedlist;
 			printf("\nYour chosen name is: %s", current->name);
 			current->next = (LLarray*) malloc(sizeof(LLarray));
+			current->next->ll = NULL;
+			current->next->name = NULL;			
 			current->next->next = NULL;
 		}
 
 	}
 	else
 		printf("\nThis name already exists");
+
 		
 }
 
 
 LLarray * accessllqueue(char * queuename, LLarray * llheadnode)
 {
+
 	LLarray * current = llheadnode;
 	while(current->next != NULL && strcmp(current->name, queuename) != 0)
 		current = current->next;
 
+	if(current->name == NULL)
+		return NULL;
 	if(strcmp(current->name, queuename) == 0)
 		return current;
 	else
@@ -559,12 +566,16 @@ void appendRBqueue(RingBuffer * RBqueue, char * queuename, RBarray * rbheadnode)
 	if(accessRBqueue(queuename, rbheadnode) == NULL)
 	{
 		if(rbheadnode->next == NULL)
-		{		
+		{
+			rbheadnode->name = (char *)calloc(strlen(queuename)+1, sizeof(char));			
 			strncpy(rbheadnode->name, queuename, strlen(queuename));
 			rbheadnode->RB = RBqueue;
 			printf("\nYour chosen name is: %s", rbheadnode->name);
 			rbheadnode->next = (RBarray*) malloc(sizeof(RBarray));
+			rbheadnode->next->RB = NULL;
+			rbheadnode->next->name = NULL;
 			rbheadnode->next->next = NULL;
+
 		}
 		else
 		{
@@ -572,17 +583,21 @@ void appendRBqueue(RingBuffer * RBqueue, char * queuename, RBarray * rbheadnode)
 			
 			while(current->next != NULL)
 				current = current->next;
-			
+
+			current->name = (char *)calloc(strlen(queuename)+1, sizeof(char));
 			strncpy(current->name, queuename, strlen(queuename));
 			current->RB = RBqueue;
 			printf("\nYour chosen name is: %s", current->name);
-			current->next = (RBarray *) malloc(sizeof(RBarray));
+			current->next = (RBarray*) malloc(sizeof(RBarray));
+			current->next->RB = NULL;
+			current->next->name = NULL;			
 			current->next->next = NULL;
 		}
 
 	}
 	else
 		printf("\nThis name already exists");
+
 		
 }
 
@@ -593,6 +608,8 @@ RBarray * accessRBqueue(char * queuename, RBarray * rbheadnode)
 	while(current->next != NULL && strcmp(current->name, queuename) != 0)
 		current = current->next;
 
+	if(current->name == NULL)
+		return NULL;
 	if(strcmp(current->name, queuename) == 0)
 		return current;
 	else
