@@ -155,10 +155,13 @@ void clearR(RingBuffer * rb)
 
 void storeR(RingBuffer * rb, char * filename)
 {
-	char filetype[] = ".bin";	
-	strncat(filename,filetype,4);
+	char filetype[6] = "rb.bin";
+	char filename2[20] = "\0";
+	strncpy(filename2, filename, strlen(filename));	
+	strncat(filename2,filetype,6);
+	printf("%s", filename2);
 
-	FILE * pFile = fopen(filename, "wb");
+	FILE * pFile = fopen(filename2, "wb");
 	
 	
 	if (pFile != NULL)
@@ -167,6 +170,7 @@ void storeR(RingBuffer * rb, char * filename)
 		fseek(pFile, 0, SEEK_END);
 		fwrite(rb, sizeof(RingBuffer), 1, pFile);
 
+		printf("\nWrite Successful\n");
 		fclose(pFile);
 	}
 	else
@@ -175,13 +179,16 @@ void storeR(RingBuffer * rb, char * filename)
 
 
 
-RingBuffer * loadR(char filename[])
+RingBuffer * loadR(char * filename)
 {
 
-	char filetype[] = ".bin";	
-	strncat(filename,filetype,4);
+	char filetype[6] = "rb.bin";
+	char filename2[20] = "\0";
+	strncpy(filename2, filename, strlen(filename));	
+	strncat(filename2,filetype,6);
+	printf("%s", filename2);
 
-	FILE * pFile = fopen(filename, "rb");
+	FILE * pFile = fopen(filename2, "rb");
 	RingBuffer * rb;
 		
 
@@ -191,6 +198,7 @@ RingBuffer * loadR(char filename[])
 		fseek(pFile, 0, SEEK_SET);
 		fread(rb, sizeof(RingBuffer), 1, pFile);
 
+		printf("\nRead successful\n");
 		fclose(pFile);
 	}
 	else

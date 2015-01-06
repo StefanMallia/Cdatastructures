@@ -1,10 +1,10 @@
-CFLAGS=-Wall -g
+CC = gcc
+CFLAGS = -Wall -g
+DEPS = LINKEDLIST.h RINGBUFFER.h
+OBJ = Client.c LINKEDLIST.c RINGBUFFER.c
 
-all: Tester #builds all with just command make
+%.o: %.c $(DEPS)
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-Tester: LINKEDLIST
-
-clean:
-	rm -f ex1 ex2
-
-.PHONY: all clean
+Client: $(OBJ)
+	gcc $(CFLAGS) -o $@ $^
