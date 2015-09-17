@@ -23,6 +23,7 @@ void enqueue(linkedlists * linkedlist, int x, int p)
 	if(linkedlist->headnode == NULL)//if linkedlist contains no nodes
 	{	//malloc and assign first node
 		linkedlist->headnode = (pqnode *) malloc(sizeof(pqnode));
+
 		
 		linkedlist->headnode->element = x;
 		linkedlist->headnode->priority = p;
@@ -60,8 +61,8 @@ void enqueue(linkedlists * linkedlist, int x, int p)
 void dequeue(linkedlists * linkedlist)
 {
 /*FIFO*/
-	pqnode * current = NULL;
-	pqnode * prev = NULL;//prev required to connect previous to next
+	pqnode * current;
+	pqnode * prev;//prev required to connect previous to next
 	
 	current = linkedlist->headnode;
 	int temppriority = 0;   
@@ -76,17 +77,21 @@ void dequeue(linkedlists * linkedlist)
    
 	current = linkedlist->headnode;
 	
-	while(current->priority != temppriority && current != NULL)
+	while(current != NULL && current->priority != temppriority)
 	{//iterate until largest priority is found
 		prev = current;
 		current=current->next;
 	}   
 
-	if(temppriority == current->priority && current != NULL)
+	if(current != NULL && temppriority == current->priority)
 	{
-	
-		prev->next = current->next;
+		if(linkedlist->headnode == current)	
+			linkedlist->headnode = current->next;
+		else
+			prev->next = current->next;
+
 		free(current);
+
 	}
 }
 
@@ -172,10 +177,12 @@ void clear(linkedlists * linkedlist)
 
 	while(current != NULL)
 	{//iterate and clear
+		
 		prev = current;
 		current = current->next;
 		free(prev);
 	}
+	linkedlist->headnode = NULL;
 }
 
 

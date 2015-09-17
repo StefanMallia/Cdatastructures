@@ -1,0 +1,3 @@
+valgrind --leak-check=full ./assignment
+gcc -Wall -g  Client.c LINKEDLIST.c RINGBUFFER.c -o assignment
+

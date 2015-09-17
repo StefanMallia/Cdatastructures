@@ -55,7 +55,8 @@ int main()
 	
 	printf("\nWelcome to the queueing application");
 
-	BEGINNING://used heavily to return to "main" menu
+while (true)
+{
 	printf("\n\na. Linked List\nb. Ring Buffer\n\n");
 	printf("Please make a selection (a or b or enter 'q' to quit):\n\n");
 	
@@ -69,19 +70,7 @@ int main()
 		switch(ch)
 		{
 			case 'a':
-				goto CASE1;//ll menu
-
-			case 'b':
-				goto CASE2;//rb menu
-		
-			default:
-				printf("\nThat is not a valid choice\n");
-				goto BEGINNING;
-		}
-	}
-
-	CASE1:
-	{
+				{
 		char * queuename;
 		char ch2 = NULL;
 
@@ -93,11 +82,11 @@ int main()
 		{
 			
 			if('q' == ch2)
-				goto BEGINNING;
+				continue;
 
 			switch(ch2)
 			{
-				case 'a':
+				case 'a': //ll menu
 				{//create a new ll
 					printf("\nName of Linked List:\n");
 					queuename = getstring();
@@ -108,7 +97,7 @@ int main()
 
 					appendllqueue(create_q(max_size), queuename, llheadnode);
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'b':
@@ -129,7 +118,7 @@ int main()
 					else
 						enqueue(accessllqueue(queuename, llheadnode)->ll, element, priority);
 				
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'c':
@@ -142,7 +131,7 @@ int main()
 					else
 						dequeue(accessllqueue(queuename, llheadnode)->ll);
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'd':
@@ -155,7 +144,7 @@ int main()
 					else
 						printf("\nHighest priority element is: %d\nwith a priority of: %d", peek(accessllqueue(queuename, llheadnode)->ll)->element, peek(accessllqueue(queuename, llheadnode)->ll)->priority);
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'e':
@@ -173,7 +162,7 @@ int main()
 							printf("Queue is not empty\n");
 					}
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'f':
@@ -186,7 +175,7 @@ int main()
 					else
 						printf("Size of queue is %d\n",size(accessllqueue(queuename, llheadnode)->ll));
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'g':
@@ -217,11 +206,12 @@ int main()
 
 					}
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'h':
 				{
+					char delete;
 					printf("\nName of Linked List:\n");
 					queuename = getstring();
 
@@ -230,18 +220,23 @@ int main()
 					else
 					{
 						clear(accessllqueue(queuename, llheadnode)->ll);
-						llheadnode = clearllqueue(queuename, llheadnode);
-						//this function returns headnode in  case it was deleted and changed
+						printf("\n%s cleared\n\n", queuename);
+						printf("Delete? (y/n)");						
+						scanf("%c%*c", &delete);						
+						if(delete == 'y')						
+							llheadnode = clearllqueue(queuename, llheadnode);
+							//this function returns the a new headnode in the case it is chosen for deletion
+
 					}
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'i':
 				{
 					printqueuesll(llheadnode);
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'j':
@@ -254,7 +249,7 @@ int main()
 					else
 						store(accessllqueue(queuename, llheadnode)->ll, queuename);
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'k':
@@ -264,21 +259,21 @@ int main()
 					
 					appendllqueue(load(queuename), queuename, llheadnode);
 
-					goto BEGINNING;
+					continue;
 				}
 
 				default:
 				{
 					printf("\nThat is not a valid choice\n");
 
-					goto BEGINNING;
+					continue;
 				}
 			}		
 		}
 	}
 
-	CASE2:
-	{
+			case 'b':
+				{
 		char * queuename;
 		char ch2 = NULL;
 
@@ -289,7 +284,7 @@ int main()
 		scanf("%c%*c", &ch2);
 		{			
 			if('q' == ch2)
-				goto BEGINNING;
+				continue;
 
 			switch(ch2)
 			{
@@ -304,7 +299,7 @@ int main()
 
 					appendrbqueue(create_qR(max_size), queuename, rbheadnode);
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'b':
@@ -325,7 +320,7 @@ int main()
 					else					
 						enqueueR(accessrbqueue(queuename, rbheadnode)->rb, element, priority);
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'c':
@@ -338,7 +333,7 @@ int main()
 					else
 						dequeueR(accessrbqueue(queuename, rbheadnode)->rb);
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'd':
@@ -351,7 +346,7 @@ int main()
 					else
 						printf("\nHighest priority element is: %d\nwith a priority of: %d", peekR(accessrbqueue(queuename, rbheadnode)->rb).elem, peekR(accessrbqueue(queuename, rbheadnode)->rb).priority);
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'e':
@@ -369,7 +364,7 @@ int main()
 							printf("Queue is not empty\n");
 					}
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'f':
@@ -382,7 +377,7 @@ int main()
 					else
 						printf("Size of queue is %d\n",sizeR(accessrbqueue(queuename, rbheadnode)->rb));
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'g':
@@ -414,11 +409,12 @@ int main()
 						rbheadnode = clearrbqueue(queuename2, rbheadnode);
 					}
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'h':
 				{
+					char delete;
 					printf("\nName of Ring Buffer:\n");
 					queuename = getstring();
 
@@ -427,16 +423,20 @@ int main()
 					else
 					{
 						clearR(accessrbqueue(queuename, rbheadnode)->rb);
-						rbheadnode = clearrbqueue(queuename, rbheadnode);
+						printf("\n%s cleared\n\n", queuename);
+						printf("Delete? (y/n)");						
+						scanf("%c%*c", &delete);						
+						if(delete == 'y')						
+							rbheadnode = clearrbqueue(queuename, rbheadnode);
 					}
 
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'i':
 				{
 					printqueuesrb(rbheadnode);
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'j':
@@ -449,7 +449,7 @@ int main()
 					else
 						storeR(accessrbqueue(queuename, rbheadnode)->rb, queuename);
 				
-					goto BEGINNING;
+					continue;
 				}
 
 				case 'k':
@@ -459,7 +459,7 @@ int main()
 
 					appendrbqueue(loadR(queuename), queuename, rbheadnode);
 
-					goto BEGINNING;
+					continue;
 
 				}
 
@@ -467,12 +467,21 @@ int main()
 				{
 					printf("\nThat is not a valid choice\n");
 
-					goto BEGINNING;
+					continue;
 				}
 			}
 		}
+	}//rb menu
+		
+			default:
+				printf("\nThat is not a valid choice\n");
+				continue;
+		}
 	}
+
 }
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -578,18 +587,21 @@ LLarray * clearllqueue(char * queuename, LLarray * llheadnode)
 			llheadnode->next->name = NULL;
 			llheadnode->next->ll = NULL;
 			llheadnode->next->next = NULL;
+			
+			llheadnode = llheadnode->next;
+
 		}
 	
 		free(current->name); // ll already freed and next should not be freed
 		free(current); // free what was previously headnode
-		printf("\n%s cleared\n", queuename);
+		printf("\n%s deleted\n", queuename);
 	}
 	else//if headnode is not node to be cleared
 	{	
 		previous->next = current->next;		
 		free(current->name);
 		free(current);
-		printf("\n%s cleared\n", queuename);	
+		printf("\n%s deleted\n", queuename);	
 		
 		
 	}
@@ -669,18 +681,20 @@ RBarray * clearrbqueue(char * queuename, RBarray * rbheadnode)
 			rbheadnode->next->name = NULL;
 			rbheadnode->next->rb = NULL;
 			rbheadnode->next->next = NULL;
+
+			rbheadnode = rbheadnode->next;
 		}
 	
 		free(current->name); // ll already freed and next should not be freed
 		free(current); // free struct
-		printf("\n%s cleared\n", queuename);
+		printf("\n%s deleted\n", queuename);
 	}
 	else
 	{	
 		previous->next = current->next;		
 		free(current->name);
 		free(current);
-		printf("\n%s cleared\n", queuename);	
+		printf("\n%s deleted\n", queuename);	
 		
 		
 	}

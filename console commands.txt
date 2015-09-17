@@ -1,3 +1,10 @@
-valgrind --leak-check=full ./assignment
-gcc -Wall -g  Client.c LINKEDLIST.c RINGBUFFER.c -o assignment
+Client.c is the menu program
+
+to compile type in terminal:
+
+make
+
+or
+
+gcc -Wall -g  Client.c LINKEDLIST.c RINGBUFFER.c -o Client
 
